@@ -821,7 +821,6 @@ function renderDashboard(brands) {
       <div style="display:flex;align-items:center;gap:10px">
         <span class="as-of">Updated ${now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</span>
         <button class="refresh-btn" onclick="init()">↻ Refresh</button>
-        <button class="refresh-btn" style="color:#dc2626" onclick="handleSignOut()">Sign out</button>
       </div>
     </div>
 
@@ -962,8 +961,9 @@ async function handleConnect() {
 }
 function handleSignOut() { clearToken(); renderSetup(); }
 
+const HARDCODED_TOKEN = '2/1212568941045213/1213965479253081:70d0dfaa80521c62436ceef653d14c94';
 async function init() {
-  const token = loadToken();
+  const token = HARDCODED_TOKEN || loadToken();
   if (!token) { renderSetup(); return; }
   renderLoading();
   try {
