@@ -480,7 +480,8 @@ async function fetchBrands(token) {
         ops, accountManager,
         taskProgressLabel,
         rawName: t.name,
-        completed: !!t.completed,
+        // Fully onboarded = Onboarding Status is "Complete" OR task checkbox ticked
+        completed: statusGid === '1213187098790837' || !!t.completed,
       };
     })
     .filter(b => b.name && b.name.trim());
