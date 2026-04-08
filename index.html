@@ -469,6 +469,7 @@ async function fetchBrands(token) {
       const section    = t.memberships?.[0]?.section?.name || 'Unknown';
       const brandName  = cf[FIELD.brandName] || t.name || '';
       const dateSigned = cf[FIELD.dateSigned] || null;
+      const brandType  = cf[FIELD.brandType] || null;
       const statusGid  = cf._statusGid;
       const statusInfo = STATUS[statusGid] || null;
       // assignee = ops person (Saat / Sanskar)
@@ -476,7 +477,7 @@ async function fetchBrands(token) {
 
       return {
         name: brandName, section, dateSigned,
-        statusGid, statusInfo,
+        brandType, statusGid, statusInfo,
         ops, accountManager,
         taskProgressLabel,
         rawName: t.name,
@@ -709,6 +710,7 @@ function refreshTable() {
           <thead>
             <tr>
               <th style="width:148px" onclick="setSort('name')">Brand${_sortBy==='name'?arrow(_sortDir):''}</th>
+              <th style="width:100px">Type</th>
               <th style="width:118px">Stage</th>
               <th style="width:148px">Progress</th>
               <th style="width:95px"  onclick="setSort('ops')">Ops${_sortBy==='ops'?arrow(_sortDir):''}  <span style="font-weight:400;color:#bbb">(assignee)</span></th>
@@ -720,7 +722,7 @@ function refreshTable() {
           </thead>
           <tbody>
             ${filtered.length === 0 ? `
-              <tr><td colspan="8">
+              <tr><td colspan="9">
                 <div class="empty-state">No brands match the filters.
                   <a href="#" onclick="clearAllFilters();return false;" style="color:var(--blue)">Clear all</a>
                 </div>
@@ -742,8 +744,12 @@ function refreshTable() {
               else if (isOk)                      blockerBadge = `<span class="badge badge-ok">On track</span>`;
               else                                blockerBadge = `<span class="badge badge-none">—</span>`;
 
+              const btShort = b.brandType ? b.brandType.replace('1P – ','').replace('1P - ','') : '—';
+              const btColor = b.brandType?.includes('3P') ? '#0891b2' : b.brandType?.includes('Affiliate') ? '#b45309' : '#7c3aed';
+
               return `<tr>
                 <td class="brand-name">${b.name}</td>
+                <td><span style="font-size:11px;font-weight:500;padding:2px 7px;border-radius:4px;background:${btColor}18;color:${btColor};border:1px solid ${btColor}33;white-space:nowrap">${btShort}</span></td>
                 <td><span class="stage-chip" ${chipStyle}>${STAGE_SHORT[b.section]||b.section}</span></td>
                 <td>
                   <div class="progress-steps">${progressStepsHtml(b.section)}</div>
@@ -821,6 +827,7 @@ function renderDashboard(brands) {
       </div>
       <div style="display:flex;align-items:center;gap:10px">
         <span class="as-of">Updated ${now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</span>
+        <a href="https://app.asana.com/0/1213113488679843/list" target="_blank" class="refresh-btn" style="text-decoration:none">↗ Asana</a>
         <button class="refresh-btn" onclick="init()">↻ Refresh</button>
       </div>
     </div>
