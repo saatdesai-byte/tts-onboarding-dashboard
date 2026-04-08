@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TikTok Shop — Onboarding Tracker</title>
+<title>TikTok Shop - OPS tracker</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -152,6 +152,21 @@
   }
   .sort-btn.active { background: var(--surface2); color: var(--ink); font-weight: 600; }
   .sort-btn:hover { border-color: var(--blue); color: var(--blue); }
+
+  /* Top tabs */
+  .tab-bar { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+  .tab-btn {
+    font-size: 12px; font-weight: 600; padding: 7px 12px;
+    border: 1px solid var(--border2); border-radius: 999px;
+    background: var(--surface); color: var(--ink2); cursor: pointer;
+  }
+  .tab-btn:hover { border-color: var(--blue); color: var(--blue); }
+  .tab-btn.active { background: #eff6ff; color: #1e40af; border-color: #bfdbfe; }
+
+  .onboarding-status {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
 
   /* Table */
   .table-wrap { overflow-x: auto; }
@@ -348,6 +363,7 @@ let _onboardedBrands = [];
 let _filters   = { stage: null, blocker: null, ops: null, am: null };
 let _sortBy    = 'days';
 let _sortDir   = -1;
+let _activeTab = 'onboarding';
 
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
 const daysSince = d => d ? Math.floor((Date.now() - new Date(d)) / 86400000) : null;
@@ -522,6 +538,24 @@ function setSort(field) {
   if (_sortBy === field) _sortDir *= -1;
   else { _sortBy = field; _sortDir = (field==='name'||field==='ops'||field==='am') ? 1 : -1; }
   refreshTable();
+}
+
+function setActiveTab(tab) {
+  _activeTab = tab;
+  updateTabView();
+}
+
+function updateTabView() {
+  const onboarding = document.getElementById('onboarding-view');
+  const offboarding = document.getElementById('offboarding-view');
+  if (!onboarding || !offboarding) return;
+
+  onboarding.style.display = _activeTab === 'onboarding' ? '' : 'none';
+  offboarding.style.display = _activeTab === 'offboarding' ? '' : 'none';
+
+  document.querySelectorAll('.tab-btn[data-tab]').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('data-tab') === _activeTab);
+  });
 }
 
 // ─── OPS WORKLOAD MINI-CARDS ─────────────────────────────────────────────────
@@ -819,40 +853,53 @@ function renderDashboard(brands) {
     <!-- Header -->
     <div class="header">
       <div class="header-left">
-        <div class="header-title">TikTok Shop — onboarding tracker</div>
-        ${totalBlocked > 0 ? `<span class="pill pill-red">${totalBlocked} blocked</span>` : ''}
-        <span class="pill pill-green">${onTrack} on track</span>
-        ${inBinding > 0 ? `<span class="pill pill-blue">${inBinding} in binding</span>` : ''}
-        <span class="pill pill-blue">live · Asana</span>
+        <div class="header-title">TikTok Shop - OPS tracker</div>
       </div>
       <div style="display:flex;align-items:center;gap:10px">
         <span class="as-of">Updated ${now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</span>
-        <a href="https://app.asana.com/0/1213113488679843/list" target="_blank" class="refresh-btn" style="text-decoration:none">↗ Asana</a>
-        <button class="refresh-btn" onclick="init()">↻ Refresh</button>
       </div>
     </div>
 
-    <!-- Pipeline flow -->
-    <div class="pipeline-flow">
-      <span class="pipeline-flow-title">Pipeline</span>
-      ${PIPELINE_STEPS.map((s,i) => `
-        <span class="pipe-chip" style="${STAGE_CHIP_STYLE[s]||''}"
-          onclick="setFilter('stage','${s}')" title="Filter to ${STAGE_SHORT[s]}">
-          ${STAGE_SHORT[s]}${stageCounts[s] ? ` <strong>${stageCounts[s]}</strong>` : ''}
-        </span>
-        ${i < PIPELINE_STEPS.length-1 ? '<span class="pipe-arrow">→</span>' : ''}
-      `).join('')}
-      ${waitBlocked > 0 ? `
-        <span style="margin-left:14px;cursor:pointer" onclick="setFilter('stage','WAITING/BLOCKED')">
-          <span style="font-size:11px;font-weight:500;background:#fffbeb;color:#92400e;border:1px solid #fde68a;padding:4px 10px;border-radius:4px;">
-            ⚠ ${waitBlocked} waiting/blocked
-          </span>
-        </span>
-      ` : ''}
+    <div class="tab-bar">
+      <button class="tab-btn ${_activeTab==='onboarding'?'active':''}" data-tab="onboarding" onclick="setActiveTab('onboarding')">Onboarding</button>
+      <button class="tab-btn ${_activeTab==='offboarding'?'active':''}" data-tab="offboarding" onclick="setActiveTab('offboarding')">Offboarding</button>
     </div>
 
-    <!-- Metrics -->
-    <div class="metrics">
+    <div id="onboarding-view">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <div class="onboarding-status">
+          ${totalBlocked > 0 ? `<span class="pill pill-red">${totalBlocked} blocked</span>` : ''}
+          <span class="pill pill-green">${onTrack} on track</span>
+          ${inBinding > 0 ? `<span class="pill pill-blue">${inBinding} in binding</span>` : ''}
+          <span class="pill pill-blue">live · Asana</span>
+        </div>
+        <div style="margin-left:auto;display:flex;gap:10px">
+          <a href="https://app.asana.com/0/1213113488679843/list" target="_blank" class="refresh-btn" style="text-decoration:none">↗ Asana</a>
+          <button class="refresh-btn" onclick="init()">↻ Refresh</button>
+        </div>
+      </div>
+
+      <!-- Pipeline flow -->
+      <div class="pipeline-flow">
+        <span class="pipeline-flow-title">Pipeline</span>
+        ${PIPELINE_STEPS.map((s,i) => `
+          <span class="pipe-chip" style="${STAGE_CHIP_STYLE[s]||''}"
+            onclick="setFilter('stage','${s}')" title="Filter to ${STAGE_SHORT[s]}">
+            ${STAGE_SHORT[s]}${stageCounts[s] ? ` <strong>${stageCounts[s]}</strong>` : ''}
+          </span>
+          ${i < PIPELINE_STEPS.length-1 ? '<span class="pipe-arrow">→</span>' : ''}
+        `).join('')}
+        ${waitBlocked > 0 ? `
+          <span style="margin-left:14px;cursor:pointer" onclick="setFilter('stage','WAITING/BLOCKED')">
+            <span style="font-size:11px;font-weight:500;background:#fffbeb;color:#92400e;border:1px solid #fde68a;padding:4px 10px;border-radius:4px;">
+              ⚠ ${waitBlocked} waiting/blocked
+            </span>
+          </span>
+        ` : ''}
+      </div>
+
+      <!-- Metrics -->
+      <div class="metrics">
       <div class="metric">
         <div class="metric-label">Total brands</div>
         <div class="metric-val">${total}</div>
@@ -878,10 +925,10 @@ function renderDashboard(brands) {
         <div class="metric-val" style="color:${bc['Brand / AM']>0?'#dc2626':'#111'}">${bc['Brand / AM']}</div>
         <div class="metric-sub">missing info / handle</div>
       </div>
-    </div>
+      </div>
 
-    <!-- Stage + Blocker charts -->
-    <div class="two-col">
+      <!-- Stage + Blocker charts -->
+      <div class="two-col">
       <div class="card">
         <div class="card-title">Pipeline by stage <span style="font-size:11px;color:#aaa;font-weight:400">(click to filter)</span></div>
         ${STAGE_ORDER.map(s => {
@@ -912,21 +959,36 @@ function renderDashboard(brands) {
           — <span style="color:#dc2626">${daysSince(mostUrgent.dateSigned)}d</span> since signed</div>
         ` : ''}
       </div>
+      </div>
+
+      <!-- Brand table (filter/sort managed by refreshTable) -->
+      <div id="brand-table-section"></div>
+
+      <!-- Ops + AM workload (below brand table) -->
+      <div id="workload-section"></div>
+
+      <!-- Fully onboarded brands -->
+      <div id="onboarded-section"></div>
     </div>
 
-    <!-- Brand table (filter/sort managed by refreshTable) -->
-    <div id="brand-table-section"></div>
-
-    <!-- Ops + AM workload (below brand table) -->
-    <div id="workload-section"></div>
-
-    <!-- Fully onboarded brands -->
-    <div id="onboarded-section"></div>
+    <div id="offboarding-view" style="display:none">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <div style="margin-left:auto;display:flex;gap:10px">
+          <a href="https://app.asana.com/0/1213113488679843/list" target="_blank" class="refresh-btn" style="text-decoration:none">↗ Asana</a>
+          <button class="refresh-btn" onclick="init()">↻ Refresh</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Offboarding</div>
+        <div class="empty-state">Add offboarding dashboard content here.</div>
+      </div>
+    </div>
 
     <div class="footer">TikTok Shop Onboarding Tracker · Pattern Operations · Refreshes on load</div>
   `;
 
   refreshTable();
+  updateTabView();
 }
 
 // ─── TOKEN / LOADING / ERROR ─────────────────────────────────────────────────
@@ -954,7 +1016,7 @@ function renderLoading() {
   document.getElementById('root').innerHTML = `
     <div class="header">
       <div class="header-left">
-        <div class="header-title">TikTok Shop — onboarding tracker</div>
+        <div class="header-title">TikTok Shop - OPS tracker</div>
         <span class="pill pill-blue">loading…</span>
       </div>
     </div>
@@ -983,7 +1045,7 @@ async function init() {
     } else {
       document.getElementById('root').innerHTML = `
         <div class="header">
-          <div class="header-left"><div class="header-title">TikTok Shop — onboarding tracker</div></div>
+          <div class="header-left"><div class="header-title">TikTok Shop - OPS tracker</div></div>
           <button class="refresh-btn" onclick="init()">↻ Retry</button>
         </div>
         <div class="error-box">Could not load Asana data: ${err.message}</div>
