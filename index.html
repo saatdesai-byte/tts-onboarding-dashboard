@@ -357,9 +357,21 @@ const STAGE_CHIP_STYLE = {
   'FINAL LIVE CHECK':        'background:#f0fdf4;color:#15803d;border-color:#bbf7d0',
 };
 
+const OFFBOARDING_PROJECT_ID = '1213984215198318';
+
+const OFFBOARD_STAGES = ['Initiated', 'Listings Offboarding', 'Access Removal'];
+
+const OFFBOARD_CHIP_STYLE = {
+  'Initiated':            'background:#fffbeb;color:#b45309;border-color:#fde68a',
+  'Listings Offboarding': 'background:#fef2f2;color:#dc2626;border-color:#fecaca',
+  'Access Removal':       'background:#f5f3ff;color:#6d28d9;border-color:#ddd6fe',
+  'Complete':             'background:#f0fdf4;color:#16a34a;border-color:#bbf7d0',
+};
+
 // ─── STATE ───────────────────────────────────────────────────────────────────
 let _allBrands       = [];
 let _onboardedBrands = [];
+let _offboardingBrands = [];
 let _filters   = { stage: null, blocker: null, ops: null, am: null };
 let _sortBy    = 'days';
 let _sortDir   = -1;
@@ -502,6 +514,28 @@ async function fetchBrands(token) {
       };
     })
     .filter(b => b.name && b.name.trim());
+}
+
+async function fetchOffboardingTasks(token) {
+  const fields = [
+    'name', 'completed', 'created_at',
+    'memberships.section.name',
+    'assignee.name',
+    'custom_fields.gid', 'custom_fields.name',
+    'custom_fields.display_value', 'custom_fields.text_value',
+  ].join(',');
+  const data = await asana('/tasks?project=' + OFFBOARDING_PROJECT_ID + '&opt_fields=' + fields + '&limit=100', token);
+  return data.data.map(t => {
+    const section = t.memberships?.[0]?.section?.name || 'Unknown';
+    let brandType = null;
+    (t.custom_fields || []).forEach(f => {
+      const fname = (f.name || '').toLowerCase();
+      if (fname.includes('brand type') || fname.includes('type')) {
+        brandType = f.display_value || f.text_value || null;
+      }
+    });
+    return { name: t.name || '', section, ops: t.assignee?.name || null, brandType, createdAt: t.created_at || null };
+  }).filter(b => b.name && b.name.trim());
 }
 
 // ─── FILTER + SORT ───────────────────────────────────────────────────────────
@@ -818,9 +852,56 @@ function refreshTable() {
   renderOnboardedSection();
 }
 
+// ─── OFFBOARDING VIEW RENDER ──────────────────────────────────────────────
+function renderOffboardingSection() {
+  const el = document.getElementById('offboarding-content');
+  if (!el) return;
+  const active    = _offboardingBrands.filter(b => b.section !== 'Complete');
+  const completed = _offboardingBrands.filter(b => b.section === 'Complete');
+  const stageCounts = {};
+  OFFBOARD_STAGES.forEach(s => stageCounts[s] = 0);
+  active.forEach(b => { if (b.section in stageCounts) stageCounts[b.section]++; });
+  let html = '<div class="metrics" style="grid-template-columns:repeat(4,minmax(0,1fr))">';
+  html += '<div class="metric"><div class="metric-label">Active offboardings</div><div class="metric-val">' + active.length + '</div><div class="metric-sub">in pipeline</div></div>';
+  html += '<div class="metric"><div class="metric-label">Initiated</div><div class="metric-val">' + (stageCounts['Initiated']||0) + '</div><div class="metric-sub">awaiting kickoff</div></div>';
+  html += '<div class="metric"><div class="metric-label">Listings Offboarding</div><div class="metric-val">' + (stageCounts['Listings Offboarding']||0) + '</div><div class="metric-sub">in progress</div></div>';
+  html += '<div class="metric"><div class="metric-label">Access Removal</div><div class="metric-val">' + (stageCounts['Access Removal']||0) + '</div><div class="metric-sub">final stage</div></div></div>';
+  html += '<div class="card"><div class="card-title">Active Offboardings</div>';
+  if (active.length === 0) {
+    html += '<div class="empty-state">No active offboardings 🎉</div>';
+  } else {
+    html += '<div class="table-wrap"><table><thead><tr><th>Brand</th><th>Stage</th><th>Type</th><th>Ops Owner</th><th>Days</th></tr></thead><tbody>';
+    active.sort((a,b) => (new Date(a.createdAt||0))-(new Date(b.createdAt||0))).forEach(b => {
+      const days = b.createdAt ? Math.floor((Date.now()-new Date(b.createdAt))/86400000) : null;
+      const cs = OFFBOARD_CHIP_STYLE[b.section]||'';
+      const btc = b.brandType?.includes('3P') ? '#0891b2' : b.brandType?.includes('1P') ? '#7c3aed' : '#888';
+      html += '<tr><td class="brand-name">' + b.name + '</td>';
+      html += '<td><span class="stage-chip" style="' + cs + '">' + b.section + '</span></td>';
+      html += '<td>' + (b.brandType ? '<span style="font-size:11px;font-weight:500;padding:2px 7px;border-radius:4px;background:' + btc + '18;color:' + btc + ';border:1px solid ' + btc + '33">' + b.brandType + '</span>' : '<span style="color:#ccc;font-size:12px">—</span>') + '</td>';
+      html += '<td>' + personChip(b.ops,'Ops owner') + '</td>';
+      html += '<td><span class="days ' + daysClass(days) + '">' + (days!==null?days+'d':'—') + '</span></td></tr>';
+    });
+    html += '</tbody></table></div>';
+  }
+  html += '<div style="font-size:11px;color:#aaa;margin-top:12px;padding-top:10px;border-top:1px solid #eee">Source: Asana Offboarding TTS 2026</div></div>';
+  if (completed.length > 0) {
+    html += '<div class="card" style="margin-top:16px"><div class="card-title">Completed Offboardings <span style="font-size:13px;color:#aaa;font-weight:400">(' + completed.length + ')</span></div>';
+    html += '<div class="table-wrap"><table><thead><tr><th>Brand</th><th>Type</th><th>Ops Owner</th></tr></thead><tbody>';
+    completed.forEach(b => {
+      const btc = b.brandType?.includes('3P') ? '#0891b2' : b.brandType?.includes('1P') ? '#7c3aed' : '#888';
+      html += '<tr><td class="brand-name">' + b.name + '</td>';
+      html += '<td>' + (b.brandType ? '<span style="font-size:11px;font-weight:500;padding:2px 7px;border-radius:4px;background:' + btc + '18;color:' + btc + ';border:1px solid ' + btc + '33">' + b.brandType + '</span>' : '<span style="color:#ccc;font-size:12px">—</span>') + '</td>';
+      html += '<td>' + personChip(b.ops,'Ops owner') + '</td></tr>';
+    });
+    html += '</tbody></table></div></div>';
+  }
+  el.innerHTML = html;
+}
+
 // ─── FULL DASHBOARD RENDER ───────────────────────────────────────────────────
-function renderDashboard(brands) {
+function renderDashboard(brands, offboardingBrands = []) {
   _allBrands         = brands.filter(b => !b.completed);
+  _offboardingBrands = offboardingBrands;
   _onboardedBrands   = brands.filter(b => b.completed);
   const now = new Date();
 
@@ -1003,20 +1084,18 @@ function renderDashboard(brands) {
     <div id="offboarding-view" style="display:none">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
         <div style="margin-left:auto;display:flex;gap:10px">
-          <a href="https://app.asana.com/0/1213113488679843/list" target="_blank" class="refresh-btn" style="text-decoration:none">↗ Asana</a>
+          <a href="https://app.asana.com/0/1213984215198318/list" target="_blank" class="refresh-btn" style="text-decoration:none">↗ Asana</a>
           <button class="refresh-btn" onclick="init()">↻ Refresh</button>
         </div>
       </div>
-      <div class="card">
-        <div class="card-title">Offboarding</div>
-        <div class="empty-state">Add offboarding dashboard content here.</div>
-      </div>
+      <div id="offboarding-content"></div>
     </div>
 
     <div class="footer">TikTok Shop Onboarding Tracker · Pattern Operations · Refreshes on load</div>
   `;
 
   refreshTable();
+  renderOffboardingSection();
   updateTabView();
 }
 
@@ -1066,8 +1145,11 @@ async function init() {
   if (!token) { renderSetup(); return; }
   renderLoading();
   try {
-    const brands = await fetchBrands(token);
-    renderDashboard(brands);
+    const [brands, offboardingBrands] = await Promise.all([
+      fetchBrands(token),
+      fetchOffboardingTasks(token).catch(() => []),
+    ]);
+    renderDashboard(brands, offboardingBrands);
   } catch (err) {
     if (err.message.includes('401') || err.message.toLowerCase().includes('unauthorized')) {
       clearToken(); renderSetup('Invalid token — please check and try again.');
