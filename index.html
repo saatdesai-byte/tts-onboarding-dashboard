@@ -334,6 +334,35 @@
   .health-review     { background:#fffbeb; color:#b45309; }
 
   .footer { font-size: 11px; color: var(--ink3); margin-top: 16px; text-align: center; }
+
+  /* ── SUMMARY TAB ──────────────────────────────────────────────────────────── */
+  .summary-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap: 12px; margin-bottom: 16px; }
+  .alert-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px 18px;
+    border-left: 4px solid #dc2626;
+  }
+  .alert-card.amber { border-left-color: #b45309; }
+  .alert-card.green { border-left-color: #16a34a; }
+  .alert-card-title { font-size: 12px; font-weight: 600; color: var(--ink2); margin-bottom: 10px; text-transform: uppercase; letter-spacing:.03em; }
+  .alert-item { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+  .alert-item:last-child { border-bottom: none; }
+  .alert-brand { font-weight: 600; flex: 1; }
+  .alert-detail { font-size: 11px; color: var(--ink3); }
+
+  .health-bar-row { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--border); }
+  .health-bar-row:last-child { border-bottom: none; }
+  .health-bar-label { font-size: 12px; color: var(--ink2); width: 110px; flex-shrink: 0; }
+  .health-bar-fill { height: 8px; border-radius: 4px; min-width: 3px; transition: width .4s; }
+  .health-bar-count { font-size: 12px; font-weight: 600; margin-left: 6px; }
+
+  .am-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .am-table th { font-size: 11px; font-weight: 600; color: var(--ink3); text-align: left; padding: 0 10px 8px 0; border-bottom: 1px solid var(--border2); text-transform: uppercase; letter-spacing:.04em; }
+  .am-table td { padding: 8px 10px 8px 0; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  .am-table tr:last-child td { border-bottom: none; }
+  .am-table tr:hover td { background: var(--surface2); }
+
+  .prio-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 5px; }
 </style>
 </head>
 <body>
@@ -718,7 +747,7 @@ function setActiveTab(tab) {
 }
 
 function updateTabView() {
-  ['onboarding','offboarding','pipeline','contracts'].forEach(t => {
+  ['onboarding','offboarding','pipeline','contracts','summary'].forEach(t => {
     const el = document.getElementById(t + '-view');
     if (el) el.style.display = (_activeTab === t) ? '' : 'none';
   });
@@ -1384,6 +1413,7 @@ function renderDashboard(brands, offboardingBrands = []) {
       <button class="tab-btn ${_activeTab==='offboarding'?'active':''}" data-tab="offboarding" onclick="setActiveTab('offboarding')">Offboarding</button>
       <button class="tab-btn ${_activeTab==='pipeline'?'active':''}"    data-tab="pipeline"    onclick="setActiveTab('pipeline')">Pipeline</button>
       <button class="tab-btn ${_activeTab==='contracts'?'active':''}"   data-tab="contracts"   onclick="setActiveTab('contracts')">Contracts</button>
+      <button class="tab-btn ${_activeTab==='summary'?'active':''}"     data-tab="summary"     onclick="setActiveTab('summary')">Summary</button>
     </div>
 
     <!-- ONBOARDING VIEW -->
@@ -1552,6 +1582,20 @@ function renderDashboard(brands, offboardingBrands = []) {
       <div id="contracts-content"></div>
     </div>
 
+    <!-- SUMMARY VIEW -->
+    <div id="summary-view" style="display:none">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <div class="onboarding-status">
+          <span class="pill pill-blue">live · Master Sheet</span>
+        </div>
+        <div style="margin-left:auto;display:flex;gap:10px">
+          <a href="https://docs.google.com/spreadsheets/d/179qZ2H7PXezB-xykCmdxNQzB767jHRh5QQQUuK34bDM" target="_blank" class="refresh-btn" style="text-decoration:none">↗ Open Sheet</a>
+          <button class="refresh-btn" onclick="reloadMasterSheet()">↻ Refresh</button>
+        </div>
+      </div>
+      <div id="summary-content"></div>
+    </div>
+
     <div class="footer">TikTok Shop OPS tracker · Pattern Operations · Refreshes on load</div>
   `;
 
@@ -1559,6 +1603,7 @@ function renderDashboard(brands, offboardingBrands = []) {
   renderOffboardingSection();
   renderPipelineView();
   refreshContracts();
+  renderSummary();
   updateTabView();
 }
 
@@ -1602,6 +1647,205 @@ async function handleConnect() {
 }
 function handleSignOut() { clearToken(); renderSetup(); }
 
+// ─── SUMMARY VIEW ─────────────────────────────────────────────────────────────
+function renderSummary() {
+  const el = document.getElementById('summary-content');
+  if (!el) return;
+  if (!_masterBrands.length) {
+    el.innerHTML = '<div class="state-box"><div class="spinner"></div>Loading master sheet…</div>';
+    return;
+  }
+
+  const brands = _masterBrands;
+  const total   = brands.length;
+  const active  = brands.filter(b => b.stage === 'Active').length;
+  const paused  = brands.filter(b => b.stage === 'Paused').length;
+  const onboard = brands.filter(b => b.stage === 'Onboarding').length;
+  const p0      = brands.filter(b => b.priority === 'P0').length;
+
+  // Revenue sum (parse numeric values)
+  const revenueTotal = brands.reduce((sum, b) => {
+    const raw = (b.estRevenue || '').replace(/[$,M]/g, '');
+    const n = parseFloat(raw);
+    if (!isNaN(n)) return sum + (b.estRevenue.includes('M') ? n * 1000000 : n);
+    return sum;
+  }, 0);
+  const revFmt = revenueTotal >= 1000000 ? `$${(revenueTotal/1000000).toFixed(1)}M` : revenueTotal > 0 ? `$${(revenueTotal/1000).toFixed(0)}K` : '—';
+
+  // Health breakdown
+  const healthMap = {};
+  brands.forEach(b => {
+    const h = b.health || 'Unknown';
+    healthMap[h] = (healthMap[h] || 0) + 1;
+  });
+  const healthOrder = ['Optimized','On Track','Working','Pending','Review','Drafts','TT Violation','Issue','CRITICAL','URGENT','Unknown'];
+  const healthColor = { 'Optimized':'#16a34a','On Track':'#1d4ed8','Working':'#1d4ed8','Pending':'#b45309','Review':'#b45309','Drafts':'#7c3aed','TT Violation':'#dc2626','Issue':'#dc2626','CRITICAL':'#dc2626','URGENT':'#dc2626','Unknown':'#9ca3af' };
+  const maxHealth = Math.max(...Object.values(healthMap), 1);
+
+  // Contract alerts
+  const now = Date.now();
+  const expired    = brands.filter(b => { const d = b.bindingEndDate && !['#N/A','N/A',''].includes(b.bindingEndDate) && new Date(b.bindingEndDate); return d && d < now; }).sort((a,b) => new Date(a.bindingEndDate)-new Date(b.bindingEndDate));
+  const expiringSoon = brands.filter(b => { const d = b.bindingEndDate && !['#N/A','N/A',''].includes(b.bindingEndDate) && new Date(b.bindingEndDate); const days = d ? Math.floor((d-now)/86400000) : null; return days !== null && days >= 0 && days <= 60; }).sort((a,b2) => new Date(a.bindingEndDate)-new Date(b2.bindingEndDate));
+  const critical   = brands.filter(b => b.health === 'CRITICAL' || b.health === 'URGENT');
+
+  // AM summary
+  const amMap = {};
+  brands.forEach(b => {
+    const am = b.am || 'Unassigned';
+    if (!amMap[am]) amMap[am] = { count:0, blocked:0, p0:0, revenue:0, health:{} };
+    amMap[am].count++;
+    if (b.blocker) amMap[am].blocked++;
+    if (b.priority === 'P0') amMap[am].p0++;
+    const raw = (b.estRevenue||'').replace(/[$,M]/g,'');
+    const n = parseFloat(raw);
+    if (!isNaN(n)) amMap[am].revenue += b.estRevenue.includes('M') ? n*1000000 : n;
+    const h = b.health || 'Unknown';
+    amMap[am].health[h] = (amMap[am].health[h]||0)+1;
+  });
+  const amList = Object.entries(amMap).sort((a,b2) => b2[1].count - a[1].count);
+
+  // Priority breakdown
+  const prioMap = { P0:0, P1:0, P2:0, P3:0, P4:0 };
+  brands.forEach(b => { if (prioMap[b.priority] !== undefined) prioMap[b.priority]++; });
+  const prioColor = { P0:'#dc2626', P1:'#b45309', P2:'#0891b2', P3:'#16a34a', P4:'#9ca3af' };
+
+  // 1P vs 3P
+  const type1p = brands.filter(b => b.type === '1P').length;
+  const type3p = brands.filter(b => b.type === '3P').length;
+
+  let html = '';
+
+  // Top KPIs
+  html += `<div class="summary-grid" style="grid-template-columns:repeat(6,minmax(0,1fr))">
+    <div class="metric"><div class="metric-label">Total brands</div><div class="metric-val">${total}</div><div class="metric-sub">in portfolio</div></div>
+    <div class="metric"><div class="metric-label">Active</div><div class="metric-val" style="color:#16a34a">${active}</div><div class="metric-sub">live on TTS</div></div>
+    <div class="metric"><div class="metric-label">Onboarding</div><div class="metric-val" style="color:#1d4ed8">${onboard}</div><div class="metric-sub">in progress</div></div>
+    <div class="metric"><div class="metric-label">Paused</div><div class="metric-val" style="color:#b45309">${paused}</div><div class="metric-sub">on hold</div></div>
+    <div class="metric"><div class="metric-label">P0 Brands</div><div class="metric-val" style="color:#dc2626">${p0}</div><div class="metric-sub">highest priority</div></div>
+    <div class="metric"><div class="metric-label">Est. Revenue</div><div class="metric-val" style="font-size:20px;color:#16a34a">${revFmt}</div><div class="metric-sub">portfolio total</div></div>
+  </div>`;
+
+  // Alerts + Health side by side
+  html += `<div class="two-col" style="margin-bottom:14px">`;
+
+  // Alerts
+  html += `<div style="display:flex;flex-direction:column;gap:12px">`;
+
+  // Critical/Urgent
+  if (critical.length) {
+    html += `<div class="alert-card"><div class="alert-card-title">🚨 Critical / Urgent (${critical.length})</div>`;
+    critical.forEach(b => {
+      html += `<div class="alert-item"><span class="alert-brand">${b.brand}</span><span style="font-size:11px;font-weight:700;color:#dc2626">${b.health}</span><span class="alert-detail">${b.am||'—'} · ${b.blocker||b.actionItems||''}</span></div>`;
+    });
+    html += `</div>`;
+  }
+
+  // Expired contracts
+  if (expired.length) {
+    html += `<div class="alert-card"><div class="alert-card-title">⛔ Expired Contracts (${expired.length})</div>`;
+    expired.slice(0,6).forEach(b => {
+      const days = Math.floor((now - new Date(b.bindingEndDate)) / 86400000);
+      html += `<div class="alert-item"><span class="alert-brand">${b.brand}</span><span style="font-size:11px;color:#dc2626;font-weight:600">${days}d ago</span><span class="alert-detail">${b.am||'—'}</span></div>`;
+    });
+    if (expired.length > 6) html += `<div style="font-size:11px;color:#aaa;padding-top:6px">+${expired.length-6} more</div>`;
+    html += `</div>`;
+  }
+
+  // Expiring soon
+  if (expiringSoon.length) {
+    html += `<div class="alert-card amber"><div class="alert-card-title">⚠️ Expiring ≤60 Days (${expiringSoon.length})</div>`;
+    expiringSoon.slice(0,6).forEach(b => {
+      const days = Math.floor((new Date(b.bindingEndDate) - now) / 86400000);
+      html += `<div class="alert-item"><span class="alert-brand">${b.brand}</span><span style="font-size:11px;color:#b45309;font-weight:600">${days}d left</span><span class="alert-detail">${b.am||'—'}</span></div>`;
+    });
+    if (expiringSoon.length > 6) html += `<div style="font-size:11px;color:#aaa;padding-top:6px">+${expiringSoon.length-6} more</div>`;
+    html += `</div>`;
+  }
+
+  if (!critical.length && !expired.length && !expiringSoon.length) {
+    html += `<div class="alert-card green"><div class="alert-card-title">✅ All Clear</div><div style="font-size:13px;color:#16a34a;padding:8px 0">No critical alerts</div></div>`;
+  }
+
+  html += `</div>`;
+
+  // Health breakdown
+  html += `<div class="card">
+    <div class="card-title">Health breakdown <span style="font-size:11px;color:#aaa;font-weight:400">${total} brands</span></div>
+    ${healthOrder.filter(h => healthMap[h]).map(h => {
+      const count = healthMap[h] || 0;
+      const pct = Math.round((count/maxHealth)*100);
+      const color = healthColor[h] || '#888';
+      return `<div class="health-bar-row">
+        <div class="health-bar-label" style="color:${color};font-weight:${['CRITICAL','URGENT'].includes(h)?700:400}">${h}</div>
+        <div style="flex:1;height:8px;background:var(--surface2);border-radius:4px;overflow:hidden;border:1px solid var(--border)">
+          <div class="health-bar-fill" style="width:${pct}%;background:${color}"></div>
+        </div>
+        <div class="health-bar-count" style="color:${color}">${count}</div>
+      </div>`;
+    }).join('')}
+
+    <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border)">
+      <div class="card-title" style="margin-bottom:10px">Brand type split</div>
+      <div style="display:flex;gap:16px">
+        <div style="text-align:center;background:#7c3aed18;border:1px solid #7c3aed33;border-radius:8px;padding:12px 24px">
+          <div style="font-size:22px;font-weight:700;color:#7c3aed">${type1p}</div>
+          <div style="font-size:11px;color:#7c3aed;font-weight:600">1P</div>
+        </div>
+        <div style="text-align:center;background:#0891b218;border:1px solid #0891b233;border-radius:8px;padding:12px 24px">
+          <div style="font-size:22px;font-weight:700;color:#0891b2">${type3p}</div>
+          <div style="font-size:11px;color:#0891b2;font-weight:600">3P</div>
+        </div>
+        ${Object.entries(prioMap).filter(([,v])=>v>0).map(([p,v]) => `
+          <div style="text-align:center;background:${prioColor[p]}18;border:1px solid ${prioColor[p]}33;border-radius:8px;padding:12px 20px">
+            <div style="font-size:20px;font-weight:700;color:${prioColor[p]}">${v}</div>
+            <div style="font-size:11px;color:${prioColor[p]};font-weight:600">${p}</div>
+          </div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+
+  html += `</div>`;
+
+  // AM breakdown table
+  html += `<div class="card" style="margin-top:14px">
+    <div class="card-title">AM portfolio breakdown</div>
+    <div class="table-wrap">
+      <table class="am-table">
+        <thead><tr>
+          <th>Account Manager</th>
+          <th style="text-align:right">Brands</th>
+          <th style="text-align:right">P0</th>
+          <th style="text-align:right">Blocked</th>
+          <th style="text-align:right">Est. Revenue</th>
+          <th>Health snapshot</th>
+        </tr></thead>
+        <tbody>
+          ${amList.map(([am, d]) => {
+            const rev = d.revenue >= 1000000 ? `$${(d.revenue/1000000).toFixed(1)}M` : d.revenue > 0 ? `$${(d.revenue/1000).toFixed(0)}K` : '—';
+            const healthChips = Object.entries(d.health).sort((a,b2)=>b2[1]-a[1]).slice(0,3).map(([h,c]) => {
+              const color = healthColor[h] || '#888';
+              return `<span style="font-size:10px;font-weight:500;padding:1px 6px;border-radius:3px;background:${color}18;color:${color};border:1px solid ${color}33;margin-right:3px">${h} ${c}</span>`;
+            }).join('');
+            return `<tr>
+              <td style="font-weight:600;font-size:13px">${am}</td>
+              <td style="text-align:right;font-weight:600">${d.count}</td>
+              <td style="text-align:right;color:${d.p0>0?'#dc2626':'#111'};font-weight:${d.p0>0?700:400}">${d.p0||'—'}</td>
+              <td style="text-align:right;color:${d.blocked>0?'#dc2626':'#aaa'};font-weight:${d.blocked>0?600:400}">${d.blocked||'—'}</td>
+              <td style="text-align:right;font-weight:600;color:#16a34a">${rev}</td>
+              <td>${healthChips}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+    <div style="font-size:11px;color:#aaa;margin-top:10px;padding-top:8px;border-top:1px solid #eee">
+      Source: <a href="https://docs.google.com/spreadsheets/d/179qZ2H7PXezB-xykCmdxNQzB767jHRh5QQQUuK34bDM" target="_blank" style="color:var(--blue)">TikTok Shop Operations Master Sheet</a>
+    </div>
+  </div>`;
+
+  el.innerHTML = html;
+}
+
 async function reloadMasterSheet() {
   const pEl = document.getElementById('pipeline-content');
   const cEl = document.getElementById('contracts-content');
@@ -1611,6 +1855,7 @@ async function reloadMasterSheet() {
     _masterBrands = await fetchMasterSheet();
     renderPipelineView();
     refreshContracts();
+    renderSummary();
   } catch(e) {
     if (pEl) pEl.innerHTML = `<div class="error-box">Could not load master sheet: ${e.message}</div>`;
   }
