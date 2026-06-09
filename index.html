@@ -154,7 +154,7 @@
   .sort-btn:hover { border-color: var(--blue); color: var(--blue); }
 
   /* Top tabs */
-  .tab-bar { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+  .tab-bar { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
   .tab-btn {
     font-size: 12px; font-weight: 600; padding: 7px 12px;
     border: 1px solid var(--border2); border-radius: 999px;
@@ -202,10 +202,8 @@
     display: inline-flex; align-items: center; justify-content: center;
     font-size: 9px; font-weight: 700; color: white; flex-shrink: 0;
   }
-  /* Ops avatars */
   .av-saat    { background: #7c3aed; }
   .av-sanskar { background: #0891b2; }
-  /* AM avatars — generated per name */
   .av-am      { background: #1d4ed8; }
 
   .badge {
@@ -274,6 +272,67 @@
   .token-note { font-size: 11px; color: var(--ink3); margin-top: 10px; }
   .token-note a { color: var(--blue); }
 
+  /* ── PIPELINE KANBAN ─────────────────────────────────────────────────── */
+  .kanban-wrap { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 12px; align-items: flex-start; }
+  .kanban-col { min-width: 210px; max-width: 240px; flex-shrink: 0; }
+  .kanban-col-header {
+    font-size: 12px; font-weight: 600; padding: 8px 12px; border-radius: 7px 7px 0 0;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .kanban-col-body { border: 1px solid var(--border); border-top: none; border-radius: 0 0 7px 7px; background: var(--surface2); padding: 8px; min-height: 60px; }
+  .kanban-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 10px 12px; margin-bottom: 7px;
+    transition: box-shadow .15s;
+  }
+  .kanban-card:last-child { margin-bottom: 0; }
+  .kanban-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,.07); }
+  .kanban-card-name { font-size: 12px; font-weight: 600; margin-bottom: 5px; color: var(--ink); }
+  .kanban-card-row { display: flex; align-items: center; justify-content: space-between; gap: 4px; margin-top: 3px; }
+  .kanban-card-meta { font-size: 10px; color: var(--ink3); }
+
+  /* Pipeline page stage summary stats */
+  .pipeline-stage-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(140px,1fr)); gap: 10px; margin-bottom: 16px;
+  }
+  .pipeline-stage-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 14px 16px;
+    cursor: pointer; transition: border-color .15s;
+  }
+  .pipeline-stage-card:hover { border-color: var(--blue); }
+  .pipeline-stage-card.active { border-color: var(--blue); background: #eff6ff; }
+  .psc-label { font-size: 11px; color: var(--ink2); margin-bottom: 4px; font-weight: 500; }
+  .psc-val { font-size: 22px; font-weight: 700; line-height: 1; }
+
+  /* ── CONTRACTS TABLE ─────────────────────────────────────────────────── */
+  .contracts-metrics { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; margin-bottom: 16px; }
+  @media(max-width:700px) { .contracts-metrics { grid-template-columns: repeat(2,1fr); } }
+
+  .exp-badge {
+    display: inline-block; font-size: 11px; font-weight: 600;
+    padding: 2px 8px; border-radius: 20px; white-space: nowrap;
+  }
+  .exp-expired  { background:#fef2f2; color:#dc2626; border:1px solid #fecaca; }
+  .exp-soon     { background:#fffbeb; color:#b45309; border:1px solid #fde68a; }
+  .exp-ok       { background:#f0fdf4; color:#15803d; border:1px solid #bbf7d0; }
+  .exp-na       { background:var(--surface2); color:var(--ink3); border:1px solid var(--border); }
+
+  .health-badge {
+    display: inline-block; font-size: 11px; font-weight: 500;
+    padding: 2px 7px; border-radius: 4px; white-space: nowrap;
+  }
+  .health-optimized  { background:#f0fdf4; color:#15803d; }
+  .health-working    { background:#eff6ff; color:#1d4ed8; }
+  .health-ontrack    { background:#eff6ff; color:#1d4ed8; }
+  .health-pending    { background:#fffbeb; color:#b45309; }
+  .health-critical   { background:#fef2f2; color:#dc2626; }
+  .health-issue      { background:#fef2f2; color:#dc2626; }
+  .health-urgent     { background:#fef2f2; color:#dc2626; font-weight:700; }
+  .health-drafts     { background:#f5f3ff; color:#6d28d9; }
+  .health-violation  { background:#fef2f2; color:#dc2626; }
+  .health-review     { background:#fffbeb; color:#b45309; }
+
   .footer { font-size: 11px; color: var(--ink3); margin-top: 16px; text-align: center; }
 </style>
 </head>
@@ -287,16 +346,17 @@
 const PROJECT_ID  = '1213113488679843';
 const STORAGE_KEY = 'asana_pat_tts_ob';
 
+const MASTER_SHEET_URL = 'https://docs.google.com/spreadsheets/d/179qZ2H7PXezB-xykCmdxNQzB767jHRh5QQQUuK34bDM/export?format=csv&gid=0';
+
 const FIELD = {
   onboardingStatus: '1213187098790831',
   brandName:        '1213225017301320',
-  accountManager:   '1213225017301318',   // people field
+  accountManager:   '1213225017301318',
   dateSigned:       '1213225018306908',
   brandType:        '1213186691704359',
   taskProgress:     '1213113488679871',
 };
 
-// Ops team — used for avatar colour
 const OPS_COLORS = { saat: '#7c3aed', sanskar: '#0891b2' };
 
 const STATUS = {
@@ -358,9 +418,7 @@ const STAGE_CHIP_STYLE = {
 };
 
 const OFFBOARDING_PROJECT_ID = '1213984215198318';
-
 const OFFBOARD_STAGES = ['Initiated', 'Listings Offboarding', 'Access Removal'];
-
 const OFFBOARD_CHIP_STYLE = {
   'Initiated':            'background:#fffbeb;color:#b45309;border-color:#fde68a',
   'Listings Offboarding': 'background:#fef2f2;color:#dc2626;border-color:#fecaca',
@@ -368,17 +426,34 @@ const OFFBOARD_CHIP_STYLE = {
   'Complete':             'background:#f0fdf4;color:#16a34a;border-color:#bbf7d0',
 };
 
+// Master sheet stage colours for kanban
+const MS_STAGE_STYLE = {
+  'Active':     { bg:'#f0fdf4', color:'#15803d', border:'#bbf7d0', hdr:'#dcfce7', hdrColor:'#15803d' },
+  'Onboarding': { bg:'#eff6ff', color:'#1e40af', border:'#bfdbfe', hdr:'#dbeafe', hdrColor:'#1e40af' },
+  'Signing':    { bg:'#f5f3ff', color:'#6d28d9', border:'#ddd6fe', hdr:'#ede9fe', hdrColor:'#6d28d9' },
+  'Paused':     { bg:'#fffbeb', color:'#b45309', border:'#fde68a', hdr:'#fef3c7', hdrColor:'#b45309' },
+  'Sellable':   { bg:'#ecfeff', color:'#0e7490', border:'#a5f3fc', hdr:'#cffafe', hdrColor:'#0e7490' },
+  'Churned':    { bg:'#f9fafb', color:'#6b7280', border:'#e5e7eb', hdr:'#f3f4f6', hdrColor:'#6b7280' },
+};
+const MS_STAGE_ORDER = ['Signing','Onboarding','Active','Sellable','Paused','Churned'];
+
 // ─── STATE ───────────────────────────────────────────────────────────────────
-let _allBrands       = [];
-let _onboardedBrands = [];
+let _allBrands         = [];
+let _onboardedBrands   = [];
 let _offboardingBrands = [];
-let _filters   = { stage: null, blocker: null, ops: null, am: null };
-let _sortBy    = 'days';
-let _sortDir   = -1;
-let _activeTab = 'onboarding';
+let _masterBrands      = [];   // from Google Sheet
+let _filters    = { stage: null, blocker: null, ops: null, am: null };
+let _sortBy     = 'days';
+let _sortDir    = -1;
+let _activeTab  = 'onboarding';
+let _pipelineStageFilter = null;
+let _contractFilters = { am: null, expiry: null, health: null };
+let _contractSort    = 'endDate';
+let _contractSortDir = 1;
 
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
 const daysSince = d => d ? Math.floor((Date.now() - new Date(d)) / 86400000) : null;
+const daysUntil = d => d ? Math.floor((new Date(d) - Date.now()) / 86400000) : null;
 
 function daysClass(n) {
   if (n === null || n === undefined) return '';
@@ -387,19 +462,16 @@ function daysClass(n) {
   return 'days-crit';
 }
 
-// Avatar initials from full name
 function initials(name) {
   if (!name) return '?';
   const parts = name.trim().split(' ');
   return parts.length >= 2 ? parts[0][0] + parts[parts.length-1][0] : parts[0].slice(0,2);
 }
 
-// Stable colour from name string
 function nameColor(name) {
   if (!name) return '#888';
   const key = name.toLowerCase().split(' ')[0];
   if (OPS_COLORS[key]) return OPS_COLORS[key];
-  // hash the name to a colour from a warm palette
   const palette = ['#1d4ed8','#0891b2','#7c3aed','#16a34a','#b45309','#be185d','#0f766e'];
   let h = 0; for (let i=0; i<name.length; i++) h = (h*31 + name.charCodeAt(i)) & 0xfffffff;
   return palette[h % palette.length];
@@ -454,6 +526,77 @@ function saveToken(t) { localStorage.setItem(STORAGE_KEY, t); }
 function loadToken()  { return localStorage.getItem(STORAGE_KEY) || ''; }
 function clearToken() { localStorage.removeItem(STORAGE_KEY); }
 
+// ─── CSV PARSER ───────────────────────────────────────────────────────────────
+function parseCSV(text) {
+  const rows = [];
+  const lines = text.split('\n');
+  for (const line of lines) {
+    if (!line.trim()) continue;
+    const cols = [];
+    let cur = '';
+    let inQ = false;
+    for (let i = 0; i < line.length; i++) {
+      const c = line[i];
+      if (c === '"') {
+        if (inQ && line[i+1] === '"') { cur += '"'; i++; }
+        else inQ = !inQ;
+      } else if (c === ',' && !inQ) {
+        cols.push(cur); cur = '';
+      } else {
+        cur += c;
+      }
+    }
+    cols.push(cur);
+    rows.push(cols);
+  }
+  return rows;
+}
+
+// ─── MASTER SHEET FETCH ───────────────────────────────────────────────────────
+async function fetchMasterSheet() {
+  const r = await fetch(MASTER_SHEET_URL);
+  if (!r.ok) throw new Error('Sheet fetch failed: ' + r.status);
+  const text = await r.text();
+  const rows = parseCSV(text);
+  // Skip header row; filter out empty brand names
+  return rows.slice(1).filter(r => r[0] && r[0].trim() && r[0].trim() !== '#N/A').map(r => {
+    const clean = v => (v || '').trim().replace(/^#N\/A$/, '');
+    return {
+      brand:          clean(r[0]),
+      type:           clean(r[1]),
+      stage:          clean(r[2]),
+      shopCode:       clean(r[4]),
+      sellerId:       clean(r[5]),
+      parentCompany:  clean(r[7]),
+      priority:       clean(r[8]),
+      ttHandle:       clean(r[9]),
+      handleConnected:clean(r[10]),
+      binding:        clean(r[11]),
+      bindingNotes:   clean(r[13]),
+      skmTag:         clean(r[14]),
+      skmCounted:     clean(r[15]),
+      onboardDate:    clean(r[16]),
+      bindingEndDate: clean(r[17]),
+      bound:          clean(r[20]),
+      baComplete:     clean(r[21]),
+      ad:             clean(r[22]),
+      am:             clean(r[23]),
+      categoryTeam:   clean(r[24]),
+      shopStatus:     clean(r[25]),
+      baStatus:       clean(r[26]),
+      baType:         clean(r[27]),
+      categoryApproval:clean(r[28]),
+      estRevenue:     clean(r[29]),
+      health:         clean(r[30]),
+      blocker:        clean(r[31]),
+      actionItems:    clean(r[32]),
+      monthlyFee:     clean(r[39]),
+      revShare:       clean(r[40]),
+      churnStatus:    clean(r[41]),
+    };
+  });
+}
+
 // ─── ASANA API ───────────────────────────────────────────────────────────────
 async function asana(path, token) {
   const r = await fetch(`https://app.asana.com/api/1.0${path}`, {
@@ -472,7 +615,7 @@ async function fetchBrands(token) {
     'custom_fields.gid','custom_fields.name',
     'custom_fields.display_value','custom_fields.enum_value',
     'custom_fields.text_value','custom_fields.date_value',
-'memberships.section.name','memberships.section.gid',
+    'memberships.section.name','memberships.section.gid',
     'assignee.name',
   ].join(',');
 
@@ -488,10 +631,7 @@ async function fetchBrands(token) {
         cf[f.gid] = f.display_value || f.text_value || f.date_value?.date || null;
         if (f.gid === FIELD.onboardingStatus) cf._statusGid = f.enum_value?.gid || null;
         if (f.gid === FIELD.taskProgress)     taskProgressLabel = f.display_value || null;
-        if (f.gid === FIELD.accountManager) {
-          // display_value holds the name directly (people_value only returns gid/resource_type)
-          accountManager = f.display_value || null;
-        }
+        if (f.gid === FIELD.accountManager)   accountManager = f.display_value || null;
       });
 
       const section    = t.memberships?.[0]?.section?.name || 'Unknown';
@@ -500,7 +640,6 @@ async function fetchBrands(token) {
       const brandType  = cf[FIELD.brandType] || null;
       const statusGid  = cf._statusGid;
       const statusInfo = STATUS[statusGid] || null;
-      // assignee = ops person (Saat / Sanskar)
       const ops = t.assignee?.name || null;
 
       return {
@@ -509,7 +648,6 @@ async function fetchBrands(token) {
         ops, accountManager,
         taskProgressLabel,
         rawName: t.name,
-        // Fully onboarded = Onboarding Status is "Complete" OR task checkbox ticked
         completed: statusGid === '1213187098790837' || !!t.completed,
       };
     })
@@ -538,7 +676,7 @@ async function fetchOffboardingTasks(token) {
   }).filter(b => b.name && b.name.trim());
 }
 
-// ─── FILTER + SORT ───────────────────────────────────────────────────────────
+// ─── FILTER + SORT (Onboarding) ───────────────────────────────────────────────
 function applyFiltersSort(brands) {
   let out = brands.slice();
   if (_filters.stage)   out = out.filter(b => b.section === _filters.stage);
@@ -580,23 +718,19 @@ function setActiveTab(tab) {
 }
 
 function updateTabView() {
-  const onboarding = document.getElementById('onboarding-view');
-  const offboarding = document.getElementById('offboarding-view');
-  if (!onboarding || !offboarding) return;
-
-  onboarding.style.display = _activeTab === 'onboarding' ? '' : 'none';
-  offboarding.style.display = _activeTab === 'offboarding' ? '' : 'none';
-
+  ['onboarding','offboarding','pipeline','contracts'].forEach(t => {
+    const el = document.getElementById(t + '-view');
+    if (el) el.style.display = (_activeTab === t) ? '' : 'none';
+  });
   document.querySelectorAll('.tab-btn[data-tab]').forEach(btn => {
     btn.classList.toggle('active', btn.getAttribute('data-tab') === _activeTab);
   });
 }
 
-// ─── OPS WORKLOAD MINI-CARDS ─────────────────────────────────────────────────
+// ─── OPS / AM WORKLOAD ────────────────────────────────────────────────────────
 function opsWorkloadHtml(brands) {
   const people = [...new Set(brands.map(b => b.ops).filter(Boolean))].sort();
   if (!people.length) return '<div style="color:#ccc;font-size:12px">No assignees found</div>';
-
   return `<div class="ops-grid">` + people.map(person => {
     const mine    = brands.filter(b => b.ops === person);
     const blocked = mine.filter(b => b.statusInfo?.blocker || b.section === 'WAITING/BLOCKED');
@@ -613,11 +747,9 @@ function opsWorkloadHtml(brands) {
   }).join('') + `</div>`;
 }
 
-// ─── AM WORKLOAD MINI-CARDS ──────────────────────────────────────────────────
 function amWorkloadHtml(brands) {
   const ams = [...new Set(brands.map(b => b.accountManager).filter(Boolean))].sort();
   if (!ams.length) return '<div style="color:#ccc;font-size:12px">No AMs found</div>';
-
   return `<div class="ops-grid">` + ams.map(am => {
     const mine    = brands.filter(b => b.accountManager === am);
     const blocked = mine.filter(b => b.statusInfo?.blocker || b.section === 'WAITING/BLOCKED');
@@ -634,20 +766,17 @@ function amWorkloadHtml(brands) {
   }).join('') + `</div>`;
 }
 
-// ─── FULLY ONBOARDED SECTION ─────────────────────────────────────────────────
+// ─── FULLY ONBOARDED ─────────────────────────────────────────────────────────
 function renderOnboardedSection() {
   const el = document.getElementById('onboarded-section');
   if (!el) return;
   const brands = _onboardedBrands;
   if (!brands.length) { el.innerHTML = ''; return; }
-
-  // Sort by dateSigned descending (most recently signed first)
   const sorted = brands.slice().sort((a, b) => {
     const da = a.dateSigned ? new Date(a.dateSigned) : new Date(0);
     const db = b.dateSigned ? new Date(b.dateSigned) : new Date(0);
     return db - da;
   });
-
   el.innerHTML = `
     <div class="card" style="margin-top:24px;border-left:4px solid #16a34a">
       <div class="card-title" style="display:flex;align-items:center;gap:8px">
@@ -687,7 +816,7 @@ function renderOnboardedSection() {
   `;
 }
 
-// ─── REFRESH TABLE ───────────────────────────────────────────────────────────
+// ─── REFRESH TABLE (Onboarding) ───────────────────────────────────────────────
 function refreshTable() {
   const filtered = applyFiltersSort(_allBrands);
   const opsList  = [...new Set(_allBrands.map(b => b.ops).filter(Boolean))].sort();
@@ -704,7 +833,6 @@ function refreshTable() {
   const el = document.getElementById('brand-table-section');
   if (!el) return;
 
-  // Re-render workload section too if filters changed
   const wl = document.getElementById('workload-section');
   if (wl) {
     wl.innerHTML = `
@@ -722,15 +850,12 @@ function refreshTable() {
   }
 
   el.innerHTML = `
-    <!-- Filter bar -->
     <div class="filter-bar">
       <span class="filter-label">Filter</span>
-
       <select class="filter-select" onchange="setFilter('stage', this.value||null); this.value=''">
         <option value="">Stage…</option>
         ${STAGE_ORDER.map(s=>`<option value="${s}" ${_filters.stage===s?'selected':''}>${STAGE_SHORT[s]}</option>`).join('')}
       </select>
-
       <select class="filter-select" onchange="setFilter('blocker', this.value||null); this.value=''">
         <option value="">Blocker…</option>
         <option value="TikTok"     ${_filters.blocker==='TikTok'?'selected':''}>TikTok</option>
@@ -738,17 +863,14 @@ function refreshTable() {
         <option value="Pattern"    ${_filters.blocker==='Pattern'?'selected':''}>Pattern</option>
         <option value="None"       ${_filters.blocker==='None'?'selected':''}>No blocker</option>
       </select>
-
       <select class="filter-select" onchange="setFilter('ops', this.value||null); this.value=''">
         <option value="">Ops…</option>
         ${opsList.map(o=>`<option value="${o}" ${_filters.ops===o?'selected':''}>${o.split(' ')[0]}</option>`).join('')}
       </select>
-
       <select class="filter-select" onchange="setFilter('am', this.value||null); this.value=''">
         <option value="">AM…</option>
         ${amList.map(a=>`<option value="${a}" ${_filters.am===a?'selected':''}>${a.split(' ')[0]}</option>`).join('')}
       </select>
-
       ${chips.length > 0 ? `
         <div class="filter-divider"></div>
         ${chips.map(c=>`
@@ -760,7 +882,6 @@ function refreshTable() {
       <span class="result-count">${filtered.length} of ${_allBrands.length} brands</span>
     </div>
 
-    <!-- Sort bar -->
     <div class="sort-bar">
       <span class="sort-label">Sort by:</span>
       <button class="sort-btn ${_sortBy==='days'?'active':''}"  onclick="setSort('days')">Days in pipeline${_sortBy==='days'?arrow(_sortDir):''}</button>
@@ -770,7 +891,6 @@ function refreshTable() {
       <button class="sort-btn ${_sortBy==='name'?'active':''}"  onclick="setSort('name')">Name${_sortBy==='name'?arrow(_sortDir):''}</button>
     </div>
 
-    <!-- Table -->
     <div class="card">
       <div class="card-title">Brand-level view</div>
       <div class="table-wrap">
@@ -852,7 +972,7 @@ function refreshTable() {
   renderOnboardedSection();
 }
 
-// ─── OFFBOARDING VIEW RENDER ──────────────────────────────────────────────
+// ─── OFFBOARDING VIEW ─────────────────────────────────────────────────────────
 function renderOffboardingSection() {
   const el = document.getElementById('offboarding-content');
   if (!el) return;
@@ -898,6 +1018,325 @@ function renderOffboardingSection() {
   el.innerHTML = html;
 }
 
+// ─── PIPELINE VIEW (Master Sheet) ────────────────────────────────────────────
+function setPipelineStageFilter(stage) {
+  _pipelineStageFilter = _pipelineStageFilter === stage ? null : stage;
+  renderPipelineView();
+}
+
+function renderPipelineView() {
+  const el = document.getElementById('pipeline-content');
+  if (!el) return;
+  if (!_masterBrands.length) {
+    el.innerHTML = '<div class="state-box"><div class="spinner"></div>Loading master sheet…</div>';
+    return;
+  }
+
+  const stages = MS_STAGE_ORDER.filter(s => _masterBrands.some(b => b.stage === s));
+  const stageCounts = {};
+  stages.forEach(s => stageCounts[s] = _masterBrands.filter(b => b.stage === s).length);
+
+  // Summary stats
+  const total      = _masterBrands.length;
+  const active     = _masterBrands.filter(b => b.stage === 'Active').length;
+  const onboarding = _masterBrands.filter(b => b.stage === 'Onboarding').length;
+  const paused     = _masterBrands.filter(b => b.stage === 'Paused').length;
+  const p0         = _masterBrands.filter(b => b.priority === 'P0').length;
+
+  // Priority chip
+  const prioColor = p => ({ P0:'#dc2626', P1:'#b45309', P2:'#0891b2', P3:'#16a34a', P4:'#9ca3af' }[p] || '#888');
+
+  // Health badge
+  const healthBadge = h => {
+    if (!h) return '';
+    const cls = {
+      'Optimized':'optimized','On Track':'ontrack','Working':'working',
+      'Pending':'pending','Pending ':'pending','CRITICAL':'critical',
+      'URGENT':'urgent','Issue':'issue','Drafts':'drafts',
+      'TT Violation':'violation','Review':'review','Optimized':'optimized',
+    };
+    const key = h.trim();
+    const c = cls[key] || 'pending';
+    return `<span class="health-badge health-${c}">${key}</span>`;
+  };
+
+  let html = '';
+
+  // Top stats
+  html += `<div class="metrics" style="grid-template-columns:repeat(5,minmax(0,1fr));margin-bottom:16px">
+    <div class="metric"><div class="metric-label">Total brands</div><div class="metric-val">${total}</div><div class="metric-sub">in master sheet</div></div>
+    <div class="metric"><div class="metric-label">Active</div><div class="metric-val" style="color:#16a34a">${active}</div><div class="metric-sub">live on TikTok Shop</div></div>
+    <div class="metric"><div class="metric-label">Onboarding</div><div class="metric-val" style="color:#1d4ed8">${onboarding}</div><div class="metric-sub">in progress</div></div>
+    <div class="metric"><div class="metric-label">Paused</div><div class="metric-val" style="color:#b45309">${paused}</div><div class="metric-sub">on hold</div></div>
+    <div class="metric"><div class="metric-label">P0 Brands</div><div class="metric-val" style="color:#dc2626">${p0}</div><div class="metric-sub">highest priority</div></div>
+  </div>`;
+
+  // Stage filter pills
+  html += `<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+    <span style="font-size:11px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.04em">Filter by stage:</span>
+    ${stages.map(s => {
+      const st = MS_STAGE_STYLE[s] || {};
+      const isActive = _pipelineStageFilter === s;
+      return `<button onclick="setPipelineStageFilter('${s}')" style="font-size:11px;font-weight:600;padding:5px 12px;border-radius:20px;border:1px solid ${st.border||'#ccc'};background:${isActive?(st.border||'#ccc'):st.bg||'#f9f9f9'};color:${isActive?'white':st.color||'#555'};cursor:pointer">
+        ${s} <span style="font-size:11px;font-weight:400">${stageCounts[s]}</span>
+      </button>`;
+    }).join('')}
+    ${_pipelineStageFilter ? `<button onclick="setPipelineStageFilter(null)" style="font-size:11px;padding:5px 12px;border-radius:20px;border:1px solid var(--border2);background:none;cursor:pointer;color:var(--ink2)">Clear ×</button>` : ''}
+  </div>`;
+
+  // Brands to show
+  const visibleBrands = _pipelineStageFilter
+    ? _masterBrands.filter(b => b.stage === _pipelineStageFilter)
+    : _masterBrands;
+
+  // If filtered to one stage, show a flat table; otherwise show kanban
+  if (_pipelineStageFilter) {
+    html += `<div class="card">
+      <div class="card-title">${_pipelineStageFilter} <span style="font-size:12px;font-weight:400;color:#aaa">${visibleBrands.length} brands</span></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>Brand</th><th>Type</th><th>Priority</th><th>AM</th>
+            <th>Shop Status</th><th>Handle Connected</th><th>Bound</th><th>Health</th><th>Blocker</th>
+          </tr></thead>
+          <tbody>
+            ${visibleBrands.map(b => {
+              const typeColor = b.type === '3P' ? '#0891b2' : b.type === '1P' ? '#7c3aed' : '#888';
+              return `<tr>
+                <td class="brand-name">${b.brand}${b.parentCompany ? `<div style="font-size:10px;color:#aaa;font-weight:400">${b.parentCompany}</div>` : ''}</td>
+                <td><span style="font-size:11px;font-weight:600;padding:2px 7px;border-radius:4px;background:${typeColor}18;color:${typeColor};border:1px solid ${typeColor}33">${b.type||'—'}</span></td>
+                <td><span style="font-size:11px;font-weight:700;color:${prioColor(b.priority)}">${b.priority||'—'}</span></td>
+                <td style="font-size:12px">${b.am||'—'}</td>
+                <td style="font-size:12px">${b.shopStatus||'—'}</td>
+                <td style="font-size:12px">${b.handleConnected || '—'}</td>
+                <td style="font-size:12px">${b.bound || '—'}</td>
+                <td>${healthBadge(b.health)}</td>
+                <td style="font-size:12px;color:#dc2626">${b.blocker||''}</td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+  } else {
+    // Kanban layout
+    html += `<div class="kanban-wrap">`;
+    stages.forEach(s => {
+      const st = MS_STAGE_STYLE[s] || { bg:'#f9f9f9', color:'#555', border:'#ddd', hdr:'#eee', hdrColor:'#555' };
+      const cards = _masterBrands.filter(b => b.stage === s);
+      html += `<div class="kanban-col">
+        <div class="kanban-col-header" style="background:${st.hdr};color:${st.hdrColor};border:1px solid ${st.border};border-bottom:none">
+          <span>${s}</span>
+          <span style="font-size:11px;font-weight:700;background:white;color:${st.hdrColor};border-radius:20px;padding:1px 7px">${cards.length}</span>
+        </div>
+        <div class="kanban-col-body">
+          ${cards.map(b => {
+            const typeColor = b.type === '3P' ? '#0891b2' : b.type === '1P' ? '#7c3aed' : '#888';
+            return `<div class="kanban-card">
+              <div class="kanban-card-name">${b.brand}</div>
+              <div class="kanban-card-row">
+                <span style="font-size:10px;font-weight:600;padding:1px 6px;border-radius:3px;background:${typeColor}18;color:${typeColor};border:1px solid ${typeColor}33">${b.type||'?'}</span>
+                <span style="font-size:10px;font-weight:700;color:${prioColor(b.priority)}">${b.priority||''}</span>
+              </div>
+              ${b.am ? `<div class="kanban-card-meta" style="margin-top:4px">👤 ${b.am.split(' ')[0]}</div>` : ''}
+              ${b.health ? `<div style="margin-top:4px">${healthBadge(b.health)}</div>` : ''}
+              ${b.blocker ? `<div style="font-size:10px;color:#dc2626;margin-top:3px">⚠ ${b.blocker}</div>` : ''}
+            </div>`;
+          }).join('')}
+        </div>
+      </div>`;
+    });
+    html += '</div>';
+  }
+
+  html += `<div style="font-size:11px;color:#aaa;margin-top:12px;text-align:center">
+    Source: <a href="https://docs.google.com/spreadsheets/d/179qZ2H7PXezB-xykCmdxNQzB767jHRh5QQQUuK34bDM" target="_blank" style="color:var(--blue)">TikTok Shop Operations Master Sheet</a> · ${total} brands
+  </div>`;
+
+  el.innerHTML = html;
+}
+
+// ─── CONTRACTS VIEW (Master Sheet) ───────────────────────────────────────────
+function setContractFilter(type, val) {
+  _contractFilters[type] = _contractFilters[type] === val ? null : val;
+  refreshContracts();
+}
+function setContractSort(field) {
+  if (_contractSort === field) _contractSortDir *= -1;
+  else { _contractSort = field; _contractSortDir = field === 'brand' ? 1 : 1; }
+  refreshContracts();
+}
+
+function expiryInfo(dateStr) {
+  if (!dateStr || dateStr === '#N/A' || dateStr === 'N/A' || dateStr === '') return { label:'N/A', cls:'exp-na', days:null };
+  const d = new Date(dateStr);
+  if (isNaN(d)) return { label:'N/A', cls:'exp-na', days:null };
+  const days = Math.floor((d - Date.now()) / 86400000);
+  if (days < 0)   return { label:`Expired ${Math.abs(days)}d ago`, cls:'exp-expired', days };
+  if (days <= 60) return { label:`${days}d left`, cls:'exp-soon', days };
+  const fmt = d.toLocaleDateString([],{month:'short',day:'numeric',year:'numeric'});
+  return { label: fmt, cls:'exp-ok', days };
+}
+
+function refreshContracts() {
+  const el = document.getElementById('contracts-content');
+  if (!el) return;
+  if (!_masterBrands.length) {
+    el.innerHTML = '<div class="state-box"><div class="spinner"></div>Loading…</div>';
+    return;
+  }
+
+  // Only brands that have binding info
+  const allBrands = _masterBrands;
+
+  // Metrics
+  const withBinding    = allBrands.filter(b => b.binding && b.binding !== 'No' && b.binding !== '');
+  const noBinding      = allBrands.filter(b => !b.binding || b.binding === 'No');
+  const expired        = allBrands.filter(b => { const {days} = expiryInfo(b.bindingEndDate); return days !== null && days < 0; });
+  const expiringSoon   = allBrands.filter(b => { const {days} = expiryInfo(b.bindingEndDate); return days !== null && days >= 0 && days <= 60; });
+
+  // Get distinct AMs for filter
+  const amList = [...new Set(allBrands.map(b => b.am).filter(Boolean))].sort();
+
+  // Apply filters
+  let filtered = allBrands.slice();
+  if (_contractFilters.am)     filtered = filtered.filter(b => b.am === _contractFilters.am);
+  if (_contractFilters.health) filtered = filtered.filter(b => b.health === _contractFilters.health);
+  if (_contractFilters.expiry === 'expired')  filtered = filtered.filter(b => { const {days} = expiryInfo(b.bindingEndDate); return days !== null && days < 0; });
+  if (_contractFilters.expiry === 'soon')     filtered = filtered.filter(b => { const {days} = expiryInfo(b.bindingEndDate); return days !== null && days >= 0 && days <= 60; });
+  if (_contractFilters.expiry === 'ok')       filtered = filtered.filter(b => { const {days} = expiryInfo(b.bindingEndDate); return days !== null && days > 60; });
+  if (_contractFilters.expiry === 'nodate')   filtered = filtered.filter(b => expiryInfo(b.bindingEndDate).days === null);
+
+  // Sort
+  filtered.sort((a, b) => {
+    let va, vb;
+    if (_contractSort === 'endDate') {
+      const da = expiryInfo(a.bindingEndDate).days; const db = expiryInfo(b.bindingEndDate).days;
+      if (da === null && db === null) return 0;
+      if (da === null) return 1;
+      if (db === null) return -1;
+      va = da; vb = db;
+    } else if (_contractSort === 'brand') { va = a.brand?.toLowerCase(); vb = b.brand?.toLowerCase(); }
+    else if (_contractSort === 'am')      { va = a.am?.toLowerCase()||''; vb = b.am?.toLowerCase()||''; }
+    else if (_contractSort === 'baStatus'){ va = a.baStatus||''; vb = b.baStatus||''; }
+    if (va < vb) return _contractSortDir;
+    if (va > vb) return -_contractSortDir;
+    return 0;
+  });
+
+  const arrow = d => d === 1 ? ' ↓' : ' ↑';
+  const prioColor = p => ({ P0:'#dc2626', P1:'#b45309', P2:'#0891b2', P3:'#16a34a', P4:'#9ca3af' }[p] || '#888');
+
+  const healthBadge = h => {
+    if (!h) return '<span style="color:#ccc">—</span>';
+    const map = { 'Optimized':'#16a34a','On Track':'#1d4ed8','Working':'#1d4ed8','Pending':'#b45309','CRITICAL':'#dc2626','URGENT':'#dc2626','Issue':'#dc2626','Drafts':'#7c3aed','TT Violation':'#dc2626','Review':'#b45309' };
+    const c = map[h.trim()] || '#888';
+    return `<span style="font-size:11px;font-weight:500;color:${c}">${h}</span>`;
+  };
+
+  const bindingBadge = v => {
+    if (!v || v === 'No') return `<span style="font-size:11px;color:#ccc">—</span>`;
+    if (v === 'Yes') return `<span style="font-size:11px;font-weight:600;color:#16a34a">✓ Yes</span>`;
+    if (v.toLowerCase().includes('pending')) return `<span style="font-size:11px;font-weight:500;color:#b45309">⏳ Pending</span>`;
+    return `<span style="font-size:11px;color:#555">${v}</span>`;
+  };
+
+  const baStatusBadge = v => {
+    if (!v) return '<span style="color:#ccc;font-size:11px">—</span>';
+    const map = { 'Complete':'#16a34a','In Progress':'#1d4ed8','Missing':'#dc2626','Yes High':'#dc2626' };
+    const c = map[v] || '#888';
+    return `<span style="font-size:11px;font-weight:500;color:${c}">${v}</span>`;
+  };
+
+  let html = '';
+
+  // Metrics
+  html += `<div class="contracts-metrics">
+    <div class="metric"><div class="metric-label">Total brands</div><div class="metric-val">${allBrands.length}</div><div class="metric-sub">in master sheet</div></div>
+    <div class="metric"><div class="metric-label">Contracts expired</div><div class="metric-val" style="color:#dc2626">${expired.length}</div><div class="metric-sub">need renewal</div></div>
+    <div class="metric"><div class="metric-label">Expiring ≤ 60 days</div><div class="metric-val" style="color:#b45309">${expiringSoon.length}</div><div class="metric-sub">action required</div></div>
+    <div class="metric"><div class="metric-label">Bound</div><div class="metric-val" style="color:#16a34a">${withBinding.length}</div><div class="metric-sub">active binding</div></div>
+  </div>`;
+
+  // Filter bar
+  html += `<div class="filter-bar">
+    <span class="filter-label">Filter</span>
+    <select class="filter-select" onchange="setContractFilter('am', this.value||null); this.value=''">
+      <option value="">AM…</option>
+      ${amList.map(a=>`<option value="${a}" ${_contractFilters.am===a?'selected':''}>${a}</option>`).join('')}
+    </select>
+    <select class="filter-select" onchange="setContractFilter('expiry', this.value||null); this.value=''">
+      <option value="">Expiry…</option>
+      <option value="expired"  ${_contractFilters.expiry==='expired'?'selected':''}>Expired</option>
+      <option value="soon"     ${_contractFilters.expiry==='soon'?'selected':''}>Expiring ≤ 60d</option>
+      <option value="ok"       ${_contractFilters.expiry==='ok'?'selected':''}>OK (> 60d)</option>
+      <option value="nodate"   ${_contractFilters.expiry==='nodate'?'selected':''}>No date</option>
+    </select>
+    ${Object.entries(_contractFilters).some(([,v])=>v) ? `
+      <div class="filter-divider"></div>
+      <button style="font-size:11px;padding:3px 8px;border:1px solid var(--border2);border-radius:20px;background:none;cursor:pointer;color:var(--ink2)" onclick="_contractFilters={am:null,expiry:null,health:null};refreshContracts()">Clear all</button>
+    ` : ''}
+    <span class="result-count">${filtered.length} of ${allBrands.length} brands</span>
+  </div>`;
+
+  // Sort bar
+  html += `<div class="sort-bar">
+    <span class="sort-label">Sort by:</span>
+    <button class="sort-btn ${_contractSort==='endDate'?'active':''}" onclick="setContractSort('endDate')">Binding End Date${_contractSort==='endDate'?arrow(_contractSortDir):''}</button>
+    <button class="sort-btn ${_contractSort==='brand'?'active':''}"   onclick="setContractSort('brand')">Brand${_contractSort==='brand'?arrow(_contractSortDir):''}</button>
+    <button class="sort-btn ${_contractSort==='am'?'active':''}"      onclick="setContractSort('am')">AM${_contractSort==='am'?arrow(_contractSortDir):''}</button>
+    <button class="sort-btn ${_contractSort==='baStatus'?'active':''}" onclick="setContractSort('baStatus')">BA Status${_contractSort==='baStatus'?arrow(_contractSortDir):''}</button>
+  </div>`;
+
+  // Table
+  html += `<div class="card">
+    <div class="card-title">Contract & Binding Status <span style="font-size:11px;font-weight:400;color:#aaa">— all brands</span></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th onclick="setContractSort('brand')">Brand${_contractSort==='brand'?arrow(_contractSortDir):''}</th>
+          <th>Type</th>
+          <th>P</th>
+          <th onclick="setContractSort('am')">AM${_contractSort==='am'?arrow(_contractSortDir):''}</th>
+          <th>Binding</th>
+          <th onclick="setContractSort('endDate')">End Date${_contractSort==='endDate'?arrow(_contractSortDir):''}</th>
+          <th onclick="setContractSort('baStatus')">BA Status${_contractSort==='baStatus'?arrow(_contractSortDir):''}</th>
+          <th>BA Type</th>
+          <th>Bound</th>
+          <th>SKM</th>
+          <th>Health</th>
+          <th>Blocker / Notes</th>
+        </tr></thead>
+        <tbody>
+          ${filtered.map(b => {
+            const typeColor = b.type === '3P' ? '#0891b2' : b.type === '1P' ? '#7c3aed' : '#888';
+            const ei = expiryInfo(b.bindingEndDate);
+            return `<tr>
+              <td class="brand-name">${b.brand}${b.parentCompany?`<div style="font-size:10px;color:#aaa;font-weight:400">${b.parentCompany}</div>`:''}</td>
+              <td><span style="font-size:11px;font-weight:600;padding:2px 6px;border-radius:3px;background:${typeColor}18;color:${typeColor};border:1px solid ${typeColor}33">${b.type||'—'}</span></td>
+              <td><span style="font-size:11px;font-weight:700;color:${prioColor(b.priority)}">${b.priority||'—'}</span></td>
+              <td style="font-size:12px">${b.am||'—'}</td>
+              <td>${bindingBadge(b.binding)}</td>
+              <td><span class="exp-badge ${ei.cls}">${ei.label}</span></td>
+              <td>${baStatusBadge(b.baStatus)}</td>
+              <td style="font-size:11px;color:#555">${b.baType||'—'}</td>
+              <td style="font-size:12px">${b.bound||'—'}</td>
+              <td style="font-size:11px;color:#555">${b.skmTag||'—'}</td>
+              <td>${healthBadge(b.health)}</td>
+              <td style="font-size:11px;color:#555;max-width:180px">${(b.blocker||b.bindingNotes) ? `<span style="color:#b45309">${b.blocker||''}</span>${b.blocker&&b.bindingNotes?' · ':''}${b.bindingNotes||''}` : '—'}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+    <div style="font-size:11px;color:#aaa;margin-top:12px;padding-top:10px;border-top:1px solid #eee">
+      Source: <a href="https://docs.google.com/spreadsheets/d/179qZ2H7PXezB-xykCmdxNQzB767jHRh5QQQUuK34bDM" target="_blank" style="color:var(--blue)">TikTok Shop Operations Master Sheet</a>
+    </div>
+  </div>`;
+
+  el.innerHTML = html;
+}
+
 // ─── FULL DASHBOARD RENDER ───────────────────────────────────────────────────
 function renderDashboard(brands, offboardingBrands = []) {
   _allBrands         = brands.filter(b => !b.completed);
@@ -931,7 +1370,6 @@ function renderDashboard(brands, offboardingBrands = []) {
     .sort((a,b) => daysSince(b.dateSigned) - daysSince(a.dateSigned))[0];
 
   document.getElementById('root').innerHTML = `
-    <!-- Header -->
     <div class="header">
       <div class="header-left">
         <div class="header-title">TikTok Shop - OPS tracker</div>
@@ -942,10 +1380,13 @@ function renderDashboard(brands, offboardingBrands = []) {
     </div>
 
     <div class="tab-bar">
-      <button class="tab-btn ${_activeTab==='onboarding'?'active':''}" data-tab="onboarding" onclick="setActiveTab('onboarding')">Onboarding</button>
+      <button class="tab-btn ${_activeTab==='onboarding'?'active':''}"  data-tab="onboarding"  onclick="setActiveTab('onboarding')">Onboarding</button>
       <button class="tab-btn ${_activeTab==='offboarding'?'active':''}" data-tab="offboarding" onclick="setActiveTab('offboarding')">Offboarding</button>
+      <button class="tab-btn ${_activeTab==='pipeline'?'active':''}"    data-tab="pipeline"    onclick="setActiveTab('pipeline')">Pipeline</button>
+      <button class="tab-btn ${_activeTab==='contracts'?'active':''}"   data-tab="contracts"   onclick="setActiveTab('contracts')">Contracts</button>
     </div>
 
+    <!-- ONBOARDING VIEW -->
     <div id="onboarding-view">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
         <div class="onboarding-status">
@@ -960,7 +1401,6 @@ function renderDashboard(brands, offboardingBrands = []) {
         </div>
       </div>
 
-      <!-- Pipeline flow -->
       <div class="pipeline-flow">
         <span class="pipeline-flow-title">Pipeline</span>
         ${PIPELINE_STEPS.map((s,i) => `
@@ -979,108 +1419,101 @@ function renderDashboard(brands, offboardingBrands = []) {
         ` : ''}
       </div>
 
-      <!-- Metrics -->
       <div class="metrics">
-      <div class="metric">
-        <div class="metric-label">Total brands</div>
-        <div class="metric-val">${total}</div>
-        <div class="metric-sub">active pipeline</div>
-      </div>
-      <div class="metric">
-        <div class="metric-label">Avg days since signed</div>
-        <div class="metric-val" style="color:${avgDays>30?'#b45309':'#16a34a'}">${avgDays!==null?avgDays+'d':'—'}</div>
-        <div class="metric-sub">longest: ${maxDays!==null?maxDays+'d':'—'}</div>
-      </div>
-      <div class="metric">
-        <div class="metric-label">In binding</div>
-        <div class="metric-val" style="color:${inBinding>0?'#0e7490':'#111'}">${inBinding}</div>
-        <div class="metric-sub">awaiting contract</div>
-      </div>
-      <div class="metric">
-        <div class="metric-label">Blocked by TikTok</div>
-        <div class="metric-val" style="color:${bc.TikTok>0?'#dc2626':'#111'}">${bc.TikTok}</div>
-        <div class="metric-sub">approval delays</div>
-      </div>
-      <div class="metric">
-        <div class="metric-label">Blocked by Brand/AM</div>
-        <div class="metric-val" style="color:${bc['Brand / AM']>0?'#dc2626':'#111'}">${bc['Brand / AM']}</div>
-        <div class="metric-sub">missing info / handle</div>
-      </div>
+        <div class="metric">
+          <div class="metric-label">Total brands</div>
+          <div class="metric-val">${total}</div>
+          <div class="metric-sub">active pipeline</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Avg days since signed</div>
+          <div class="metric-val" style="color:${avgDays>30?'#b45309':'#16a34a'}">${avgDays!==null?avgDays+'d':'—'}</div>
+          <div class="metric-sub">longest: ${maxDays!==null?maxDays+'d':'—'}</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">In binding</div>
+          <div class="metric-val" style="color:${inBinding>0?'#0e7490':'#111'}">${inBinding}</div>
+          <div class="metric-sub">awaiting contract</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Blocked by TikTok</div>
+          <div class="metric-val" style="color:${bc.TikTok>0?'#dc2626':'#111'}">${bc.TikTok}</div>
+          <div class="metric-sub">approval delays</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Blocked by Brand/AM</div>
+          <div class="metric-val" style="color:${bc['Brand / AM']>0?'#dc2626':'#111'}">${bc['Brand / AM']}</div>
+          <div class="metric-sub">missing info / handle</div>
+        </div>
       </div>
 
-    <!-- Brand type avg days -->
-    <div class="card" style="margin-bottom:14px">
-      <div class="card-title">Avg days in pipeline by brand type</div>
-      <div style="display:flex;flex-wrap:wrap;gap:12px">
-        ${(() => {
-          const types = {};
-          brands.forEach(b => {
-            if (!b.brandType || b.dateSigned === null) return;
-            const d = daysSince(b.dateSigned);
-            if (d === null) return;
-            if (!types[b.brandType]) types[b.brandType] = { total: 0, count: 0 };
-            types[b.brandType].total += d;
-            types[b.brandType].count++;
-          });
-          return Object.entries(types).sort((a,b) => b[1].total/b[1].count - a[1].total/a[1].count).map(([type, {total, count}]) => {
-            const avg = Math.round(total / count);
-            const btShort = type.replace(' – New Shop','- New Shop').replace(' – Existing Shop','- Existing Shop').replace(' - New Shop','- New Shop').replace(' - Existing Shop','- Existing Shop').replace(' - HYBRID','- Hybrid');
-            const color = type.includes('3P') ? '#0891b2' : type.includes('Affiliate') ? '#b45309' : '#7c3aed';
-            const dayColor = avg > 30 ? '#dc2626' : avg > 14 ? '#b45309' : '#16a34a';
-            return `<div style="background:${color}10;border:1px solid ${color}30;border-radius:8px;padding:12px 18px;min-width:130px">
-              <div style="font-size:11px;font-weight:600;color:${color};margin-bottom:4px">${btShort}</div>
-              <div style="font-size:24px;font-weight:700;color:${dayColor};line-height:1">${avg}d</div>
-              <div style="font-size:11px;color:#999;margin-top:3px">${count} brand${count!==1?'s':''}</div>
+      <div class="card" style="margin-bottom:14px">
+        <div class="card-title">Avg days in pipeline by brand type</div>
+        <div style="display:flex;flex-wrap:wrap;gap:12px">
+          ${(() => {
+            const types = {};
+            brands.forEach(b => {
+              if (!b.brandType || b.dateSigned === null) return;
+              const d = daysSince(b.dateSigned);
+              if (d === null) return;
+              if (!types[b.brandType]) types[b.brandType] = { total: 0, count: 0 };
+              types[b.brandType].total += d;
+              types[b.brandType].count++;
+            });
+            return Object.entries(types).sort((a,b) => b[1].total/b[1].count - a[1].total/a[1].count).map(([type, {total, count}]) => {
+              const avg = Math.round(total / count);
+              const btShort = type.replace(' – New Shop','- New Shop').replace(' – Existing Shop','- Existing Shop').replace(' - New Shop','- New Shop').replace(' - Existing Shop','- Existing Shop').replace(' - HYBRID','- Hybrid');
+              const color = type.includes('3P') ? '#0891b2' : type.includes('Affiliate') ? '#b45309' : '#7c3aed';
+              const dayColor = avg > 30 ? '#dc2626' : avg > 14 ? '#b45309' : '#16a34a';
+              return `<div style="background:${color}10;border:1px solid ${color}30;border-radius:8px;padding:12px 18px;min-width:130px">
+                <div style="font-size:11px;font-weight:600;color:${color};margin-bottom:4px">${btShort}</div>
+                <div style="font-size:24px;font-weight:700;color:${dayColor};line-height:1">${avg}d</div>
+                <div style="font-size:11px;color:#999;margin-top:3px">${count} brand${count!==1?'s':''}</div>
+              </div>`;
+            }).join('');
+          })()}
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title">Pipeline by stage <span style="font-size:11px;color:#aaa;font-weight:400">(click to filter)</span></div>
+          ${STAGE_ORDER.map(s => {
+            const count = stageCounts[s]||0;
+            const pct = Math.round((count/maxCount)*100);
+            return `<div class="stage-row">
+              <div class="stage-label" onclick="setFilter('stage','${s}')">${STAGE_SHORT[s]||s}</div>
+              <div class="bar-wrap"><div class="bar" style="width:${pct}%;background:${STAGE_COLOR[s]||'#888'}"></div></div>
+              <div class="stage-count" style="color:${count===0?'#ccc':'#111'}">${count}</div>
             </div>`;
-          }).join('');
-        })()}
-      </div>
-    </div>
-
-    <!-- Stage + Blocker charts -->
-    <div class="two-col">
-      <div class="card">
-        <div class="card-title">Pipeline by stage <span style="font-size:11px;color:#aaa;font-weight:400">(click to filter)</span></div>
-        ${STAGE_ORDER.map(s => {
-          const count = stageCounts[s]||0;
-          const pct = Math.round((count/maxCount)*100);
-          return `<div class="stage-row">
-            <div class="stage-label" onclick="setFilter('stage','${s}')">${STAGE_SHORT[s]||s}</div>
-            <div class="bar-wrap"><div class="bar" style="width:${pct}%;background:${STAGE_COLOR[s]||'#888'}"></div></div>
-            <div class="stage-count" style="color:${count===0?'#ccc':'#111'}">${count}</div>
-          </div>`;
-        }).join('')}
-      </div>
-      <div class="card">
-        <div class="card-title">Blocker attribution <span style="font-size:11px;color:#aaa;font-weight:400">(click to filter)</span></div>
-        ${[['TikTok','#b45309'],['Brand / AM','#dc2626'],['Pattern','#1d4ed8'],['None','#16a34a']].map(([name,color]) => {
-          const count = bc[name];
-          const pct = total > 0 ? Math.round((count/total)*100) : 0;
-          return `<div class="blocker-row">
-            <div class="b-dot" style="background:${color}"></div>
-            <div class="b-name" onclick="setFilter('blocker','${name==='None'?'None':name}')">${name==='None'?'No blocker':name}</div>
-            <div class="b-n">${count}</div>
-            <div class="b-pct">${pct}%</div>
-          </div>`;
-        }).join('')}
-        ${mostUrgent ? `
-          <div class="b-divider"></div>
-          <div class="b-note">Most urgent: <strong>${mostUrgent.name}</strong>
-          — <span style="color:#dc2626">${daysSince(mostUrgent.dateSigned)}d</span> since signed</div>
-        ` : ''}
-      </div>
+          }).join('')}
+        </div>
+        <div class="card">
+          <div class="card-title">Blocker attribution <span style="font-size:11px;color:#aaa;font-weight:400">(click to filter)</span></div>
+          ${[['TikTok','#b45309'],['Brand / AM','#dc2626'],['Pattern','#1d4ed8'],['None','#16a34a']].map(([name,color]) => {
+            const count = bc[name];
+            const pct = total > 0 ? Math.round((count/total)*100) : 0;
+            return `<div class="blocker-row">
+              <div class="b-dot" style="background:${color}"></div>
+              <div class="b-name" onclick="setFilter('blocker','${name==='None'?'None':name}')">${name==='None'?'No blocker':name}</div>
+              <div class="b-n">${count}</div>
+              <div class="b-pct">${pct}%</div>
+            </div>`;
+          }).join('')}
+          ${mostUrgent ? `
+            <div class="b-divider"></div>
+            <div class="b-note">Most urgent: <strong>${mostUrgent.name}</strong>
+            — <span style="color:#dc2626">${daysSince(mostUrgent.dateSigned)}d</span> since signed</div>
+          ` : ''}
+        </div>
       </div>
 
-      <!-- Brand table (filter/sort managed by refreshTable) -->
       <div id="brand-table-section"></div>
-
-      <!-- Ops + AM workload (below brand table) -->
       <div id="workload-section"></div>
-
-      <!-- Fully onboarded brands -->
       <div id="onboarded-section"></div>
     </div>
 
+    <!-- OFFBOARDING VIEW -->
     <div id="offboarding-view" style="display:none">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
         <div style="margin-left:auto;display:flex;gap:10px">
@@ -1091,11 +1524,41 @@ function renderDashboard(brands, offboardingBrands = []) {
       <div id="offboarding-content"></div>
     </div>
 
-    <div class="footer">TikTok Shop Onboarding Tracker · Pattern Operations · Refreshes on load</div>
+    <!-- PIPELINE VIEW -->
+    <div id="pipeline-view" style="display:none">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <div class="onboarding-status">
+          <span class="pill pill-blue">live · Master Sheet</span>
+        </div>
+        <div style="margin-left:auto;display:flex;gap:10px">
+          <a href="https://docs.google.com/spreadsheets/d/179qZ2H7PXezB-xykCmdxNQzB767jHRh5QQQUuK34bDM" target="_blank" class="refresh-btn" style="text-decoration:none">↗ Open Sheet</a>
+          <button class="refresh-btn" onclick="reloadMasterSheet()">↻ Refresh</button>
+        </div>
+      </div>
+      <div id="pipeline-content"></div>
+    </div>
+
+    <!-- CONTRACTS VIEW -->
+    <div id="contracts-view" style="display:none">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <div class="onboarding-status">
+          <span class="pill pill-blue">live · Master Sheet</span>
+        </div>
+        <div style="margin-left:auto;display:flex;gap:10px">
+          <a href="https://docs.google.com/spreadsheets/d/179qZ2H7PXezB-xykCmdxNQzB767jHRh5QQQUuK34bDM" target="_blank" class="refresh-btn" style="text-decoration:none">↗ Open Sheet</a>
+          <button class="refresh-btn" onclick="reloadMasterSheet()">↻ Refresh</button>
+        </div>
+      </div>
+      <div id="contracts-content"></div>
+    </div>
+
+    <div class="footer">TikTok Shop OPS tracker · Pattern Operations · Refreshes on load</div>
   `;
 
   refreshTable();
   renderOffboardingSection();
+  renderPipelineView();
+  refreshContracts();
   updateTabView();
 }
 
@@ -1139,16 +1602,32 @@ async function handleConnect() {
 }
 function handleSignOut() { clearToken(); renderSetup(); }
 
+async function reloadMasterSheet() {
+  const pEl = document.getElementById('pipeline-content');
+  const cEl = document.getElementById('contracts-content');
+  if (pEl) pEl.innerHTML = '<div class="state-box"><div class="spinner"></div>Refreshing master sheet…</div>';
+  if (cEl) cEl.innerHTML = '';
+  try {
+    _masterBrands = await fetchMasterSheet();
+    renderPipelineView();
+    refreshContracts();
+  } catch(e) {
+    if (pEl) pEl.innerHTML = `<div class="error-box">Could not load master sheet: ${e.message}</div>`;
+  }
+}
+
 const HARDCODED_TOKEN = '2/1212568941045213/1213965479253081:70d0dfaa80521c62436ceef653d14c94';
 async function init() {
   const token = HARDCODED_TOKEN || loadToken();
   if (!token) { renderSetup(); return; }
   renderLoading();
   try {
-    const [brands, offboardingBrands] = await Promise.all([
+    const [brands, offboardingBrands, masterBrands] = await Promise.all([
       fetchBrands(token),
       fetchOffboardingTasks(token).catch(() => []),
+      fetchMasterSheet().catch(() => []),
     ]);
+    _masterBrands = masterBrands;
     renderDashboard(brands, offboardingBrands);
   } catch (err) {
     if (err.message.includes('401') || err.message.toLowerCase().includes('unauthorized')) {
