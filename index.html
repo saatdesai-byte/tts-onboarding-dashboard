@@ -377,6 +377,12 @@ const STORAGE_KEY = 'asana_pat_tts_ob';
 
 const MASTER_SHEET_URL = 'https://docs.google.com/spreadsheets/d/179qZ2H7PXezB-xykCmdxNQzB767jHRh5QQQUuK34bDM/export?format=csv&gid=0';
 
+// ─── SALESFORCE PIPELINE DATA (Creators 90D Close Date) ──────────────────────
+const PIPELINE_DEALS = [{"forecast":"Commit","rep":"Brayden Beckham","opp":"Synergy CHC | TTS","amount":1678000.0,"stage":"Stage 4: Negotiations","close":"6/15/2026","age":119,"type":"Creators"},{"forecast":"Commit","rep":"Bryan Engstrom","opp":"Olay | TT Rev Share","amount":2080000.0,"stage":"Stage 4: Negotiations","close":"6/30/2026","age":69,"type":"3P - Marketplaces"},{"forecast":"Commit","rep":"Carson Singley","opp":"Olay | TT Rev Share","amount":520000.0,"stage":"Stage 4: Negotiations","close":"6/30/2026","age":69,"type":"3P - Marketplaces"},{"forecast":"Commit","rep":"Jake Moss","opp":"Nutrex Research - TTS","amount":3420000.0,"stage":"Stage 4: Negotiations","close":"7/31/2026","age":246,"type":"3P - Marketplaces"},{"forecast":"Commit","rep":"Jayden Griffin","opp":"Tru Earth - Marketplaces","amount":1400000.0,"stage":"Stage 4: Negotiations","close":"6/26/2026","age":133,"type":"3P - Marketplaces"},{"forecast":"Commit","rep":"Kaumana Rindlisbacher","opp":"ABG - Centric Brands (Dockers, Izod, Vince, Hunter, Juicy, Billabong, Lucky, Nautica, Roxy, Spyder, Quik, RVCA, etc.)","amount":3750000.0,"stage":"Stage 4: Negotiations","close":"6/30/2026","age":287,"type":"3P - Marketplaces"},{"forecast":"Commit","rep":"Kaumana Rindlisbacher","opp":"ABG - GIII (Champion, Nautica, Vince, Dockers, Vince Camuto)","amount":1800000.0,"stage":"Stage 4: Negotiations","close":"7/31/2026","age":214,"type":"3P - Marketplaces"},{"forecast":"Commit","rep":"Kaumana Rindlisbacher","opp":"ABG - Catalyst Brands (Aéropostale, Lucky Brand)","amount":1125000.0,"stage":"Stage 4: Negotiations","close":"6/15/2026","age":214,"type":"3P - Marketplaces"},{"forecast":"Commit","rep":"Kaumana Rindlisbacher","opp":"ABG - Simon Harrison (Ted Baker & Lucky Brand Jewelry) - US","amount":146652.0,"stage":"Stage 4: Negotiations","close":"8/27/2026","age":81,"type":"3P - Marketplaces"},{"forecast":"Best Case","rep":"Brayden Beckham","opp":"Proactiv | TTS","amount":2600000.0,"stage":"Stage 4: Negotiations","close":"6/19/2026","age":90,"type":"3P - Marketplaces"},{"forecast":"Best Case","rep":"Brayden Beckham","opp":"Each & Every | TTS","amount":1000000.0,"stage":"Stage 3: Buy In","close":"6/25/2026","age":40,"type":"3P - Marketplaces"},{"forecast":"Best Case","rep":"Bryan Engstrom","opp":"Vetoquinol | TTS","amount":240000.0,"stage":"Stage 3: Buy In","close":"7/31/2026","age":279,"type":"Creators"},{"forecast":"Best Case","rep":"Bryan Engstrom","opp":"Great Lakes Wellness TTS","amount":1200000.0,"stage":"Stage 3: Buy In","close":"6/30/2026","age":168,"type":"3P - Marketplaces"},{"forecast":"Best Case","rep":"Bryan Engstrom","opp":"Bayer Miralax | TTS","amount":3100000.0,"stage":"Stage 4: Negotiations","close":"6/30/2026","age":155,"type":"3P - Marketplaces"},{"forecast":"Best Case","rep":"Bryan Engstrom","opp":"Kevin Murphy | TTS","amount":4650000.0,"stage":"Stage 3: Buy In","close":"7/31/2026","age":112,"type":"3P - Marketplaces"},{"forecast":"Best Case","rep":"Bryan Engstrom","opp":"Beekeeper's | TTS","amount":600000.0,"stage":"Stage 3: Buy In","close":"7/31/2026","age":111,"type":"Creators"},{"forecast":"Best Case","rep":"Bryan Engstrom","opp":"General Mills | TTS","amount":600000.0,"stage":"Stage 3: Buy In","close":"7/1/2026","age":106,"type":"Creators"},{"forecast":"Best Case","rep":"Bryan Engstrom","opp":"Garanimals - TTS","amount":2000000.0,"stage":"Stage 2: Proposal","close":"8/31/2026","age":70,"type":"3P - Marketplaces"},{"forecast":"Best Case","rep":"Bryan Engstrom","opp":"Duracell | TTS","amount":1000000.0,"stage":"Stage 4: Negotiations","close":"6/30/2026","age":60,"type":"3P - Marketplaces"},{"forecast":"Best Case","rep":"Carson Singley","opp":"Olaplex | TTS","amount":600000.0,"stage":"Stage 3: Buy In","close":"6/30/2026","age":145,"type":"Creators"},{"forecast":"Best Case","rep":"Carson Singley","opp":"Kilo Distribution (Cellmatics Beauty) - TTS","amount":1860000.0,"stage":"Stage 3: Buy In","close":"7/31/2026","age":109,"type":"3P - Marketplaces"},{"forecast":"Best Case","rep":"Carson Singley","opp":"Each & Every | TTS","amount":1000000.0,"stage":"Stage 3: Buy In","close":"6/25/2026","age":40,"type":"3P - Marketplaces"},{"forecast":"Best Case","rep":"Jake Moss","opp":"PlusOne | TTS","amount":2460000.0,"stage":"Stage 4: Negotiations","close":"7/31/2026","age":126,"type":"Creators"},{"forecast":"Best Case","rep":"Jake Moss","opp":"Torani - TTS","amount":2325000.0,"stage":"Stage 3: Buy In","close":"8/31/2026","age":96,"type":"3P - Marketplaces"},{"forecast":"Best Case","rep":"Jake Moss","opp":"Sukoshi | TTS","amount":3080000.0,"stage":"Stage 4: Negotiations","close":"6/30/2026","age":84,"type":"Creators"},{"forecast":"Best Case","rep":"Jake Moss","opp":"Merrick / Purina - TTS","amount":0,"stage":"Stage 3: Buy In","close":"6/30/2026","age":70,"type":"Creators"},{"forecast":"Best Case","rep":"Jake Moss","opp":"Compana TTS","amount":0,"stage":"Stage 3: Buy In","close":"6/30/2026","age":35,"type":"Creators"},{"forecast":"Best Case","rep":"Jayden Griffin","opp":"Dr. G | TTS","amount":4000000.0,"stage":"Stage 1: Verify","close":"6/30/2026","age":203,"type":"3P - Marketplaces"},{"forecast":"Best Case","rep":"Jayden Griffin","opp":"Universal Nutrition - TTS","amount":2000000.0,"stage":"Stage 3: Buy In","close":"7/31/2026","age":125,"type":"3P - Marketplaces"},{"forecast":"Best Case","rep":"Jayden Griffin","opp":"Strivectin | TTS","amount":1500000.0,"stage":"Stage 4: Negotiations","close":"6/19/2026","age":57,"type":"3P - Marketplaces"},{"forecast":"Best Case","rep":"Jordan Cuthbert","opp":"Feetures | TTS","amount":748800.0,"stage":"Stage 4: Negotiations","close":"6/26/2026","age":175,"type":"3P - Marketplaces"},{"forecast":"Best Case","rep":"Jordan Cuthbert","opp":"Doogee | TTS","amount":846000.0,"stage":"Stage 4: Negotiations","close":"6/26/2026","age":56,"type":"3P - Marketplaces"},{"forecast":"Best Case","rep":"Jordan Cuthbert","opp":"Farmacy Beauty | TTS","amount":3000000.0,"stage":"Stage 4: Negotiations","close":"6/12/2026","age":49,"type":"Creators"},{"forecast":"Best Case","rep":"Jordan Cuthbert","opp":"BYOMA | TTS","amount":2000000.0,"stage":"Stage 3: Buy In","close":"7/31/2026","age":35,"type":"Creators"},{"forecast":"Best Case","rep":"Kaumana Rindlisbacher","opp":"ABG - Sport Casuals (Reebok Golf)","amount":0,"stage":"Stage 3: Buy In","close":"7/30/2026","age":176,"type":"3P - Marketplaces"},{"forecast":"Best Case","rep":"Kaumana Rindlisbacher","opp":"ABG - BrandWorks (2253 Apparel) - Roxy","amount":103989.39,"stage":"Stage 4: Negotiations","close":"7/28/2026","age":77,"type":"3P - Marketplaces"},{"forecast":"Upside","rep":"Brayden Beckham","opp":"Luxillia | TTS","amount":600000.0,"stage":"Stage 4: Negotiations","close":"6/30/2026","age":196,"type":"Creators"},{"forecast":"Upside","rep":"Brayden Beckham","opp":"Aloha Earrings | TTS","amount":600000.0,"stage":"Stage 4: Negotiations","close":"6/30/2026","age":196,"type":"Creators"},{"forecast":"Upside","rep":"Brayden Beckham","opp":"Pierced Owl | TTS","amount":600000.0,"stage":"Stage 4: Negotiations","close":"6/30/2026","age":182,"type":"Creators"},{"forecast":"Upside","rep":"Brayden Beckham","opp":"Nature's Answer - TTS","amount":600000.0,"stage":"Stage 0: Engage","close":"6/19/2026","age":85,"type":"Creators"},{"forecast":"Upside","rep":"Brayden Beckham","opp":"Gentle Monster | TTS","amount":600000.0,"stage":"Stage 1: Verify","close":"6/16/2026","age":82,"type":"Creators"},{"forecast":"Upside","rep":"Brayden Beckham","opp":"Hugh & Grace - TikTok Shop","amount":600000.0,"stage":"Stage 1: Verify","close":"7/29/2026","age":55,"type":"Creators"},{"forecast":"Upside","rep":"Brayden Beckham","opp":"FOREO | TTS","amount":600000.0,"stage":"Stage 1: Verify","close":"7/30/2026","age":33,"type":"Creators"},{"forecast":"Upside","rep":"Brayden Beckham","opp":"Old Spice | TTS","amount":8000000.0,"stage":"Stage 3: Buy In","close":"7/31/2026","age":8,"type":"3P - Marketplaces"},{"forecast":"Upside","rep":"Bryan Engstrom","opp":"Jade Leaf Matcha | TTS","amount":600000.0,"stage":"Stage 1: Verify","close":"6/30/2026","age":153,"type":"3P - Marketplaces"},{"forecast":"Upside","rep":"Bryan Engstrom","opp":"IT Cosmetics | NextWave Campaign","amount":1500000.0,"stage":"Stage 2: Proposal","close":"8/28/2026","age":140,"type":"Creators"},{"forecast":"Upside","rep":"Bryan Engstrom","opp":"Diesel | TTS","amount":600000.0,"stage":"Stage 0: Engage","close":"7/31/2026","age":140,"type":"Creators"},{"forecast":"Upside","rep":"Bryan Engstrom","opp":"Kong | TTS","amount":600000.0,"stage":"Stage 2: Proposal","close":"8/31/2026","age":112,"type":"3P - Marketplaces"},{"forecast":"Upside","rep":"Bryan Engstrom","opp":"Kreg | TTS","amount":600000.0,"stage":"Stage 3: Buy In","close":"7/31/2026","age":111,"type":"3P - Marketplaces"},{"forecast":"Upside","rep":"Bryan Engstrom","opp":"Reef Perfumes | TTS","amount":1000000.0,"stage":"Stage 3: Buy In","close":"8/1/2026","age":105,"type":"Creators"},{"forecast":"Upside","rep":"Bryan Engstrom","opp":"OWYN | TTS","amount":600000.0,"stage":"Stage 1: Verify","close":"8/31/2026","age":84,"type":"Creators"},{"forecast":"Upside","rep":"Bryan Engstrom","opp":"Quest Nutrition | TTS","amount":600000.0,"stage":"Stage 1: Verify","close":"8/31/2026","age":84,"type":"Creators"},{"forecast":"Upside","rep":"Bryan Engstrom","opp":"Viomi | TTS","amount":600000.0,"stage":"Stage 1: Verify","close":"7/31/2026","age":47,"type":"3P - Marketplaces"},{"forecast":"Upside","rep":"Bryan Engstrom","opp":"First Day | TTS","amount":240000.0,"stage":"Stage 0: Engage","close":"8/1/2026","age":36,"type":"Creators"},{"forecast":"Upside","rep":"Bryan Engstrom","opp":"Tata Harper | TTS","amount":0,"stage":"Stage 0: Engage","close":"8/1/2026","age":36,"type":"Creators"},{"forecast":"Upside","rep":"Bryan Engstrom","opp":"Secret | TTS","amount":2500000.0,"stage":"Stage 1: Verify","close":"7/31/2026","age":8,"type":"3P - Marketplaces"},{"forecast":"Upside","rep":"Carson Singley","opp":"New Age | TTS","amount":600000.0,"stage":"Stage 3: Buy In","close":"7/31/2026","age":503,"type":"3P - Marketplaces"},{"forecast":"Upside","rep":"Carson Singley","opp":"Gardena | TTS","amount":600000.0,"stage":"Stage 2: Proposal","close":"7/31/2026","age":358,"type":"Creators"},{"forecast":"Upside","rep":"Carson Singley","opp":"The Laundress | TTS","amount":600000.0,"stage":"Stage 3: Buy In","close":"6/30/2026","age":354,"type":"Creators"},{"forecast":"Upside","rep":"Carson Singley","opp":"Dr. Emil | TTS","amount":600000.0,"stage":"Stage 2: Proposal","close":"7/1/2026","age":308,"type":"Creators"},{"forecast":"Upside","rep":"Carson Singley","opp":"Nespresso | TTS","amount":600000.0,"stage":"Stage 2: Proposal","close":"6/30/2026","age":183,"type":"Creators"},{"forecast":"Upside","rep":"Carson Singley","opp":"KANS | TTS","amount":600000.0,"stage":"Stage 3: Buy In","close":"6/30/2026","age":152,"type":"Creators"},{"forecast":"Upside","rep":"Carson Singley","opp":"Ghost | TTS","amount":600000.0,"stage":"Stage 2: Proposal","close":"6/30/2026","age":138,"type":"Creators"},{"forecast":"Upside","rep":"Carson Singley","opp":"Coty | TTS","amount":600000.0,"stage":"Stage 2: Proposal","close":"6/30/2026","age":138,"type":"Creators"},{"forecast":"Upside","rep":"Carson Singley","opp":"The Lip Bar | TTS","amount":600000.0,"stage":"Stage 1: Verify","close":"6/30/2026","age":138,"type":"Creators"},{"forecast":"Upside","rep":"Carson Singley","opp":"Cecred | TTS","amount":600000.0,"stage":"Stage 1: Verify","close":"6/30/2026","age":138,"type":"Creators"},{"forecast":"Upside","rep":"Carson Singley","opp":"Matrix | TTS","amount":3000000.0,"stage":"Stage 4: Negotiations","close":"7/31/2026","age":102,"type":"Creators"},{"forecast":"Upside","rep":"Carson Singley","opp":"Cascade | TTS","amount":2500000.0,"stage":"Stage 2: Proposal","close":"6/30/2026","age":74,"type":"3P - Marketplaces"},{"forecast":"Upside","rep":"Jake Moss","opp":"ABG - Generation Joy (Reebok Nutrition)","amount":225000.0,"stage":"Stage 4: Negotiations","close":"7/31/2026","age":214,"type":"3P - Marketplaces"},{"forecast":"Upside","rep":"Jake Moss","opp":"Shore Magic | TTS","amount":197500.0,"stage":"Stage 4: Negotiations","close":"6/30/2026","age":202,"type":"Creators"},{"forecast":"Upside","rep":"Jake Moss","opp":"A&F | TTS","amount":600000.0,"stage":"Stage 2: Proposal","close":"6/30/2026","age":169,"type":"Creators"},{"forecast":"Upside","rep":"Jake Moss","opp":"Swarovski | TTS","amount":600000.0,"stage":"Stage 1: Verify","close":"6/30/2026","age":77,"type":"Creators"},{"forecast":"Upside","rep":"Jake Moss","opp":"Cascade | TTS","amount":2500000.0,"stage":"Stage 2: Proposal","close":"6/30/2026","age":74,"type":"3P - Marketplaces"},{"forecast":"Upside","rep":"Jake Moss","opp":"Innersense TTS","amount":3000000.0,"stage":"Stage 3: Buy In","close":"8/31/2026","age":50,"type":"3P - Marketplaces"},{"forecast":"Upside","rep":"Jake Moss","opp":"RootLabs | TTS","amount":0,"stage":"Stage 1: Verify","close":"6/30/2026","age":47,"type":"Creators"},{"forecast":"Upside","rep":"Jake Moss","opp":"Magic Spoon | TTS","amount":0,"stage":"Stage 2: Proposal","close":"7/31/2026","age":27,"type":"Creators"},{"forecast":"Upside","rep":"Jake Moss","opp":"Shiseido | TTS","amount":0,"stage":"Stage 2: Proposal","close":"8/31/2026","age":20,"type":"Creators"},{"forecast":"Upside","rep":"Jake Moss","opp":"Nixon - TTS Launch","amount":0,"stage":"Stage 0: Engage","close":"8/25/2026","age":7,"type":"Creators"},{"forecast":"Upside","rep":"Jake Moss","opp":"Away | TTS","amount":1300000.0,"stage":"Stage 3: Buy In","close":"6/30/2026","age":5,"type":"Creators"},{"forecast":"Upside","rep":"Jayden Griffin","opp":"Blue Stop Max TTS","amount":144000.0,"stage":"Stage 1: Verify","close":"6/30/2026","age":315,"type":"Creators"},{"forecast":"Upside","rep":"Jayden Griffin","opp":"Party Animal - TTS","amount":60000.0,"stage":"Stage 1: Verify","close":"6/30/2026","age":263,"type":"Creators"},{"forecast":"Upside","rep":"Jayden Griffin","opp":"Midascare | TTS","amount":2000000.0,"stage":"Stage 2: Proposal","close":"8/24/2026","age":181,"type":"3P - Marketplaces"},{"forecast":"Upside","rep":"Jayden Griffin","opp":"Juvenon | TTS","amount":0,"stage":"Stage 1: Verify","close":"6/30/2026","age":175,"type":"Creators"},{"forecast":"Upside","rep":"Jayden Griffin","opp":"Stoner Car Care - TTS","amount":600000.0,"stage":"Stage 1: Verify","close":"6/25/2026","age":110,"type":"Creators"},{"forecast":"Upside","rep":"Jayden Griffin","opp":"Kenneth Cole | TTS","amount":600000.0,"stage":"Stage 2: Proposal","close":"8/20/2026","age":109,"type":"3P - Marketplaces"},{"forecast":"Upside","rep":"Jayden Griffin","opp":"Smart Sweets | TTS","amount":600000.0,"stage":"Stage 1: Verify","close":"7/31/2026","age":56,"type":"3P - Marketplaces"},{"forecast":"Upside","rep":"Jayden Griffin","opp":"Atuvos - 3P TTS and AMZ US","amount":4500000.0,"stage":"Stage 2: Proposal","close":"6/30/2026","age":48,"type":"3P - Marketplaces"},{"forecast":"Upside","rep":"Jayden Griffin","opp":"Archer Jerky | TTS","amount":600000.0,"stage":"Stage 3: Buy In","close":"6/30/2026","age":21,"type":"3P - Marketplaces"},{"forecast":"Upside","rep":"Jayden Griffin","opp":"Tone | TTS","amount":600000.0,"stage":"Stage 1: Verify","close":"7/31/2026","age":8,"type":"Creators"},{"forecast":"Upside","rep":"Jordan Cuthbert","opp":"Jupiter | TTS","amount":2200000.0,"stage":"Stage 3: Buy In","close":"6/26/2026","age":169,"type":"Creators"},{"forecast":"Upside","rep":"Jordan Cuthbert","opp":"Tru Fragrance | TTS","amount":1500000.0,"stage":"Stage 3: Buy In","close":"7/31/2026","age":140,"type":"Creators"},{"forecast":"Upside","rep":"Jordan Cuthbert","opp":"Ka'Chava","amount":2000000.0,"stage":"Stage 1: Verify","close":"8/28/2026","age":132,"type":"3P - Marketplaces"},{"forecast":"Upside","rep":"Jordan Cuthbert","opp":"Natural Balance Pet | TTS","amount":600000.0,"stage":"Stage 3: Buy In","close":"8/28/2026","age":130,"type":"Creators"},{"forecast":"Upside","rep":"Jordan Cuthbert","opp":"Shinola | TTS","amount":600000.0,"stage":"Stage 2: Proposal","close":"7/31/2026","age":118,"type":"Creators"},{"forecast":"Upside","rep":"Jordan Cuthbert","opp":"Reef Perfumes | TTS","amount":1000000.0,"stage":"Stage 3: Buy In","close":"8/1/2026","age":105,"type":"Creators"},{"forecast":"Upside","rep":"Jordan Cuthbert","opp":"MABE TTS","amount":0,"stage":"Stage 0: Engage","close":"6/26/2026","age":103,"type":"Creators"},{"forecast":"Upside","rep":"Jordan Cuthbert","opp":"The New Primal | TTS","amount":600000.0,"stage":"Stage 0: Engage","close":"7/31/2026","age":91,"type":"Creators"},{"forecast":"Upside","rep":"Jordan Cuthbert","opp":"Ka'Chava | TTS","amount":2000000.0,"stage":"Stage 2: Proposal","close":"8/28/2026","age":84,"type":"Creators"},{"forecast":"Upside","rep":"Jordan Cuthbert","opp":"Codeage | TTS","amount":600000.0,"stage":"Stage 0: Engage","close":"7/31/2026","age":82,"type":"Creators"},{"forecast":"Upside","rep":"Jordan Cuthbert","opp":"Barker Wellness Co","amount":600000.0,"stage":"Stage 3: Buy In","close":"6/26/2026","age":81,"type":"Creators"},{"forecast":"Upside","rep":"Jordan Cuthbert","opp":"Harris Happy Cow TTS","amount":1000000.0,"stage":"Stage 4: Negotiations","close":"6/12/2026","age":71,"type":"Creators"},{"forecast":"Upside","rep":"Jordan Cuthbert","opp":"NDYIN-Amazon and TTS US 3P","amount":2700000.0,"stage":"Stage 3: Buy In","close":"6/30/2026","age":68,"type":"3P - Marketplaces"},{"forecast":"Upside","rep":"Jordan Cuthbert","opp":"Hello Bello | TTS V2","amount":600000.0,"stage":"Stage 0: Engage","close":"6/26/2026","age":56,"type":"Creators"},{"forecast":"Upside","rep":"Jordan Cuthbert","opp":"USB | TTS","amount":600000.0,"stage":"Stage 0: Engage","close":"6/26/2026","age":56,"type":"Creators"},{"forecast":"Upside","rep":"Jordan Cuthbert","opp":"Tru Western | TTS","amount":600000.0,"stage":"Stage 0: Engage","close":"6/26/2026","age":43,"type":"3P - Marketplaces"},{"forecast":"Upside","rep":"Jordan Cuthbert","opp":"Lake & Skye | TTS","amount":600000.0,"stage":"Stage 0: Engage","close":"7/24/2026","age":25,"type":"3P - Marketplaces"},{"forecast":"Upside","rep":"Jordan Cuthbert","opp":"ARG | TTS v2","amount":800000.0,"stage":"Stage 2: Proposal","close":"7/31/2026","age":21,"type":"3P - Marketplaces"},{"forecast":"Upside","rep":"Kaumana Rindlisbacher","opp":"ABG - AMG (Champion, Reebok, Billabong, Spyder, Lucky, Izod, Van Heusen, Nautica)","amount":1800000.0,"stage":"Stage 4: Negotiations","close":"7/31/2026","age":290,"type":"3P - Marketplaces"},{"forecast":"Upside","rep":"Kaumana Rindlisbacher","opp":"ABG - BCI Brands (Vince & Ted Baker Women's Apparel)","amount":225000.0,"stage":"Stage 1: Verify","close":"8/31/2026","age":195,"type":"3P - Marketplaces"},{"forecast":"Upside","rep":"Kaumana Rindlisbacher","opp":"ABG - One Turn (Volcom & Spyder - UK)","amount":175000.0,"stage":"Stage 2: Proposal","close":"7/31/2026","age":181,"type":"3P - Marketplaces"}];
+
+let _pipelineRepFilter = null;
+let _pipelineForecastFilter = null;
+
 const FIELD = {
   onboardingStatus: '1213187098790831',
   brandName:        '1213225017301320',
@@ -1047,7 +1053,7 @@ function renderOffboardingSection() {
   el.innerHTML = html;
 }
 
-// ─── PIPELINE VIEW (Master Sheet) ────────────────────────────────────────────
+// ─── PIPELINE VIEW (Salesforce · Creators 90D) ───────────────────────────────
 function setPipelineStageFilter(stage) {
   _pipelineStageFilter = _pipelineStageFilter === stage ? null : stage;
   renderPipelineView();
@@ -1056,10 +1062,112 @@ function setPipelineStageFilter(stage) {
 function renderPipelineView() {
   const el = document.getElementById('pipeline-content');
   if (!el) return;
-  if (!_masterBrands.length) {
-    el.innerHTML = '<div class="state-box"><div class="spinner"></div>Loading master sheet…</div>';
-    return;
+
+  const fmtAmt = n => n >= 1000000 ? `$${(n/1000000).toFixed(1)}M` : n > 0 ? `$${(n/1000).toFixed(0)}K` : '—';
+  const FORECAST_STYLE = {
+    'Commit':    { bg:'#f0fdf4', border:'#bbf7d0', hdr:'#dcfce7', color:'#15803d' },
+    'Best Case': { bg:'#eff6ff', border:'#bfdbfe', hdr:'#dbeafe', color:'#1e40af' },
+    'Upside':    { bg:'#fefce8', border:'#fde68a', hdr:'#fef9c3', color:'#92400e' },
+  };
+  const STAGE_COLOR = {
+    'Stage 0: Engage':'#9ca3af','Stage 1: Verify':'#60a5fa','Stage 2: Proposal':'#a78bfa',
+    'Stage 3: Buy In':'#f97316','Stage 4: Negotiations':'#16a34a'
+  };
+  const reps = [...new Set(PIPELINE_DEALS.map(d => d.rep))].sort();
+  const filtered = PIPELINE_DEALS.filter(d =>
+    (!_pipelineRepFilter || d.rep === _pipelineRepFilter) &&
+    (!_pipelineForecastFilter || d.forecast === _pipelineForecastFilter)
+  );
+  const totalAmt = filtered.reduce((s,d) => s+d.amount, 0);
+  const commitAmt = filtered.filter(d=>d.forecast==='Commit').reduce((s,d)=>s+d.amount,0);
+  const bestAmt   = filtered.filter(d=>d.forecast==='Best Case').reduce((s,d)=>s+d.amount,0);
+  const upsideAmt = filtered.filter(d=>d.forecast==='Upside').reduce((s,d)=>s+d.amount,0);
+  let html = '';
+
+  // KPIs
+  html += `<div class="metrics" style="grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:16px">
+    <div class="metric"><div class="metric-label">Total Pipeline</div><div class="metric-val" style="color:#1d4ed8;font-size:22px">${fmtAmt(totalAmt)}</div><div class="metric-sub">${filtered.length} deals</div></div>
+    <div class="metric" style="border-left:3px solid #16a34a"><div class="metric-label">Commit</div><div class="metric-val" style="color:#16a34a;font-size:20px">${fmtAmt(commitAmt)}</div><div class="metric-sub">${filtered.filter(d=>d.forecast==='Commit').length} deals</div></div>
+    <div class="metric" style="border-left:3px solid #1d4ed8"><div class="metric-label">Best Case</div><div class="metric-val" style="color:#1d4ed8;font-size:20px">${fmtAmt(bestAmt)}</div><div class="metric-sub">${filtered.filter(d=>d.forecast==='Best Case').length} deals</div></div>
+    <div class="metric" style="border-left:3px solid #b45309"><div class="metric-label">Upside</div><div class="metric-val" style="color:#b45309;font-size:20px">${fmtAmt(upsideAmt)}</div><div class="metric-sub">${filtered.filter(d=>d.forecast==='Upside').length} deals</div></div>
+  </div>`;
+
+  // Filters
+  html += `<div class="filter-bar">
+    <span class="filter-label">Filter</span>
+    <select class="filter-select" onchange="_pipelineRepFilter=this.value||null;renderPipelineView()">
+      <option value="">All Reps</option>
+      ${reps.map(r=>`<option value="${r}" ${_pipelineRepFilter===r?'selected':''}>${r.split(' ')[0]}</option>`).join('')}
+    </select>
+    <select class="filter-select" onchange="_pipelineForecastFilter=this.value||null;renderPipelineView()">
+      <option value="">All Forecasts</option>
+      ${['Commit','Best Case','Upside'].map(f=>`<option value="${f}" ${_pipelineForecastFilter===f?'selected':''}>${f}</option>`).join('')}
+    </select>
+    ${(_pipelineRepFilter||_pipelineForecastFilter)?`<button onclick="_pipelineRepFilter=null;_pipelineForecastFilter=null;renderPipelineView()" style="font-size:11px;padding:4px 10px;border:1px solid var(--border2);border-radius:20px;background:none;cursor:pointer;color:var(--ink2)">Clear ×</button>`:''}
+    <span class="result-count">${filtered.length} deals · ${fmtAmt(totalAmt)}</span>
+  </div>`;
+
+  // Kanban by forecast
+  html += `<div class="kanban-wrap">`;
+  for (const fc of ['Commit','Best Case','Upside']) {
+    const st = FORECAST_STYLE[fc];
+    const cards = filtered.filter(d => d.forecast === fc).sort((a,b) => b.amount - a.amount);
+    const colTotal = cards.reduce((s,d)=>s+d.amount,0);
+    html += `<div class="kanban-col" style="min-width:280px;max-width:320px">
+      <div class="kanban-col-header" style="background:${st.hdr};color:${st.color};border:1px solid ${st.border};border-bottom:none">
+        <span style="font-weight:700">${fc}</span>
+        <span style="font-size:11px;background:white;padding:2px 8px;border-radius:20px;color:${st.color};font-weight:700">${fmtAmt(colTotal)}</span>
+      </div>
+      <div class="kanban-col-body" style="background:${st.bg}20;border:1px solid ${st.border};border-top:none;border-radius:0 0 7px 7px;padding:8px;min-height:60px">
+        ${cards.map(d => {
+          const stageColor = STAGE_COLOR[d.stage] || '#888';
+          const brandName = d.opp.replace(/ \| TTS$/,'').replace(/ - TTS$/,'').replace(' | NextWave Campaign','').replace(' - Marketplaces','');
+          return `<div class="kanban-card" style="margin-bottom:7px">
+            <div class="kanban-card-name" style="font-size:12px;font-weight:600;margin-bottom:6px">${brandName}</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:4px;margin-bottom:4px">
+              <span style="font-size:13px;font-weight:700;color:#16a34a">${d.amount>0?fmtAmt(d.amount):'TBD'}</span>
+              <span style="font-size:10px;color:${d.type==='Creators'?'#7c3aed':'#0891b2'};font-weight:600">${d.type==='Creators'?'Creator':'3P'}</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+              <span style="font-size:10px;font-weight:500;padding:1px 6px;border-radius:3px;background:${stageColor}18;color:${stageColor};border:1px solid ${stageColor}33">${d.stage.replace('Stage ','S')}</span>
+              <span style="font-size:10px;color:var(--ink3)">Close ${d.close}</span>
+            </div>
+            <div style="font-size:10px;color:var(--ink3);margin-top:3px">👤 ${d.rep.split(' ')[0]}</div>
+          </div>`;
+        }).join('')}
+        ${cards.length===0?`<div style="text-align:center;padding:16px;color:#ccc;font-size:12px">No deals</div>`:''}
+      </div>
+    </div>`;
   }
+  html += '</div>';
+
+  // Rep breakdown
+  const repSummary = {};
+  filtered.forEach(d => {
+    if (!repSummary[d.rep]) repSummary[d.rep] = { commit:0, bestCase:0, upside:0, total:0, count:0 };
+    repSummary[d.rep].total += d.amount; repSummary[d.rep].count++;
+    if (d.forecast==='Commit') repSummary[d.rep].commit += d.amount;
+    if (d.forecast==='Best Case') repSummary[d.rep].bestCase += d.amount;
+    if (d.forecast==='Upside') repSummary[d.rep].upside += d.amount;
+  });
+  html += `<div class="card" style="margin-top:14px">
+    <div class="card-title">Rep breakdown</div>
+    <div class="table-wrap"><table class="am-table">
+      <thead><tr><th>Rep</th><th style="text-align:right">Deals</th><th style="text-align:right;color:#16a34a">Commit</th><th style="text-align:right;color:#1d4ed8">Best Case</th><th style="text-align:right;color:#b45309">Upside</th><th style="text-align:right">Total</th></tr></thead>
+      <tbody>${Object.entries(repSummary).sort((a,b)=>b[1].total-a[1].total).map(([rep,d])=>
+        `<tr><td style="font-weight:600;cursor:pointer;color:var(--blue)" onclick="_pipelineRepFilter='${rep}';renderPipelineView()">${rep}</td>
+        <td style="text-align:right">${d.count}</td>
+        <td style="text-align:right;color:#16a34a;font-weight:600">${d.commit>0?fmtAmt(d.commit):'—'}</td>
+        <td style="text-align:right;color:#1d4ed8;font-weight:600">${d.bestCase>0?fmtAmt(d.bestCase):'—'}</td>
+        <td style="text-align:right;color:#b45309;font-weight:600">${d.upside>0?fmtAmt(d.upside):'—'}</td>
+        <td style="text-align:right;font-weight:700">${fmtAmt(d.total)}</td></tr>`
+      ).join('')}</tbody>
+    </table></div>
+    <div style="font-size:11px;color:#aaa;margin-top:10px;padding-top:8px;border-top:1px solid #eee">Source: Salesforce · Creators 90D Close Date · As of 2026-06-09</div>
+  </div>`;
+
+  // dummy block to satisfy old function body structure
+  if (false) {
 
   const stages = MS_STAGE_ORDER.filter(s => _masterBrands.some(b => b.stage === s));
   const stageCounts = {};
@@ -1178,9 +1286,7 @@ function renderPipelineView() {
     html += '</div>';
   }
 
-  html += `<div style="font-size:11px;color:#aaa;margin-top:12px;text-align:center">
-    Source: <a href="https://docs.google.com/spreadsheets/d/179qZ2H7PXezB-xykCmdxNQzB767jHRh5QQQUuK34bDM" target="_blank" style="color:var(--blue)">TikTok Shop Operations Master Sheet</a> · ${total} brands
-  </div>`;
+  } // end if(false) — old code kept for reference
 
   el.innerHTML = html;
 }
@@ -1558,11 +1664,10 @@ function renderDashboard(brands, offboardingBrands = []) {
     <div id="pipeline-view" style="display:none">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
         <div class="onboarding-status">
-          <span class="pill pill-blue">live · Master Sheet</span>
+          <span class="pill pill-blue">Salesforce · Creators 90D Close Date</span>
         </div>
         <div style="margin-left:auto;display:flex;gap:10px">
-          <a href="https://docs.google.com/spreadsheets/d/179qZ2H7PXezB-xykCmdxNQzB767jHRh5QQQUuK34bDM" target="_blank" class="refresh-btn" style="text-decoration:none">↗ Open Sheet</a>
-          <button class="refresh-btn" onclick="reloadMasterSheet()">↻ Refresh</button>
+          <a href="https://patterninc.lightning.force.com/lightning/r/Report/00OTO000005Niez2AC/view" target="_blank" class="refresh-btn" style="text-decoration:none">↗ Salesforce</a>
         </div>
       </div>
       <div id="pipeline-content"></div>
