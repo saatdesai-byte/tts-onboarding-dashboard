@@ -475,42 +475,42 @@ const MS_STAGE_ORDER = ['Signing','Onboarding','Active','Sellable','Paused','Chu
 // ─── ABG BRANDS DATA ─────────────────────────────────────────────────────────
 // Add new ABG brands here — they'll appear automatically in the ABG tab
 const ABG_BRANDS = [
-  // ── Live ──────────────────────────────────────────────────────────────────
-  { brand:'Forever 21',        opco:'ABG Direct',               status:'Live',        shopStatus:'Pattern Registered',
+  // ── Live ── progress: 0=nothing, 1=shop done, 2=products done, 3=fully live ──
+  { brand:'Forever 21',        opco:'ABG Direct',               status:'Live',        shopStatus:'Pattern Registered', progress:2,
     currentWork:'Mark Edwards assortment (610 SKUs) — image issues being resolved. Brands Unlimited (198 SKUs) — images/descriptions missing. Brands Unlimited (810 SKUs) — ~400 listings have incorrect/missing images.',
     blocker:'Images/descriptions missing on multiple assortments', skus:'1618+', am:'' },
-  { brand:'Volcom',             opco:'ABG - Blue Sage',           status:'Live',        shopStatus:'Pattern Registered',
+  { brand:'Volcom',             opco:'ABG - Blue Sage',           status:'Live',        shopStatus:'Pattern Registered', progress:2,
     currentWork:'Working on 4th assortment (231 SKUs). Waiting on images from brand.',
     blocker:'Waiting on brand images', skus:'231', am:'' },
-  { brand:'Roxy',               opco:'ABG - Blue Sage',           status:'Live',        shopStatus:'Pattern Registered',
+  { brand:'Roxy',               opco:'ABG - Blue Sage',           status:'Live',        shopStatus:'Pattern Registered', progress:2,
     currentWork:'Working on YGI assortment (426 SKUs). Titles and images are mismatched.',
     blocker:'Title/image mismatch', skus:'426', am:'' },
-  { brand:'Spyder',             opco:'ABG - Levy Group',          status:'Live',        shopStatus:'Pattern Registered',
+  { brand:'Spyder',             opco:'ABG - Levy Group',          status:'Live',        shopStatus:'Pattern Registered', progress:1,
     currentWork:'Master file created. Products uploaded in Draft status. Inventory syncing.',
     blocker:'Waiting on Brand Authorization + email ID for verification code', skus:'', am:'' },
-  { brand:'Nautica',            opco:'ABG - Levy Group',          status:'Live',        shopStatus:'Pattern Registered',
+  { brand:'Nautica',            opco:'ABG - Levy Group',          status:'Live',        shopStatus:'Pattern Registered', progress:1,
     currentWork:'Shop created. Waiting on first assortment details from brand.',
     blocker:'Waiting on brand assortment', skus:'', am:'' },
   // ── In Progress ───────────────────────────────────────────────────────────
-  { brand:'Shaq',               opco:'ABG - Falic Fashion',       status:'In Progress', shopStatus:'Deactivated',
+  { brand:'Shaq',               opco:'ABG - Falic Fashion',       status:'In Progress', shopStatus:'Deactivated', progress:1,
     currentWork:'Shop setup complete. Product onboarding planned end of week. Shop goes live June.',
     blocker:'Waiting on FDA doc from brand — check inventory with Matt H', skus:'', am:'' },
-  { brand:'IZOD',               opco:'Unified Leather (Carolyn Benitez)', status:'In Progress', shopStatus:'Deactivated',
+  { brand:'IZOD',               opco:'Unified Leather (Carolyn Benitez)', status:'In Progress', shopStatus:'Deactivated', progress:1,
     currentWork:'Shop created. Shelf setup task to be created. Currently onboarding alongside Brooks Brothers.',
     blocker:'Waiting on variation images + category doc', skus:'', am:'' },
-  { brand:'Brooks Brothers',    opco:'Unified Leather (Carolyn Benitez)', status:'In Progress', shopStatus:'Deactivated',
+  { brand:'Brooks Brothers',    opco:'Unified Leather (Carolyn Benitez)', status:'In Progress', shopStatus:'Deactivated', progress:1,
     currentWork:'Same OpCo as IZOD. Shelf setup task to be created. No separate blockers flagged.',
     blocker:'Waiting on variation images + category doc', skus:'', am:'' },
-  { brand:'Aeropostale',        opco:'ABG - Maesa',               status:'In Progress', shopStatus:'Deactivated',
+  { brand:'Aeropostale',        opco:'ABG - Maesa',               status:'In Progress', shopStatus:'Deactivated', progress:1,
     currentWork:'Fragrance category. Product onboarding in progress. Product information available.',
     blocker:'Waiting on FDA doc from brand — pushing shop live on Aeropostale shop, check on inventory (no PO)', skus:'', am:'' },
-  { brand:'RVCA',               opco:'ABG - Blue Sage',           status:'In Progress', shopStatus:'Not Created',
+  { brand:'RVCA',               opco:'ABG - Blue Sage',           status:'In Progress', shopStatus:'Not Created', progress:0,
     currentWork:'Working on first assortment. Product info missing.',
     blocker:'Images, descriptions, dimensions all missing', skus:'', am:'' },
-  { brand:'Volcom (Blue Sage)', opco:'ABG - Blue Sage',           status:'In Progress', shopStatus:'Not Created',
+  { brand:'Volcom (Blue Sage)', opco:'ABG - Blue Sage',           status:'In Progress', shopStatus:'Not Created', progress:0,
     currentWork:'Working on first assortment (29 SKUs).',
     blocker:'Titles and images missing', skus:'29', am:'' },
-  { brand:'Roxy (Blue Sage)',   opco:'ABG - Blue Sage',           status:'In Progress', shopStatus:'Not Created',
+  { brand:'Roxy (Blue Sage)',   opco:'ABG - Blue Sage',           status:'In Progress', shopStatus:'Not Created', progress:0,
     currentWork:'Working on first assortment.',
     blocker:'Product information not yet received from brand', skus:'', am:'' },
   // ── Not Started ───────────────────────────────────────────────────────────
@@ -1674,9 +1674,10 @@ function renderABG() {
   };
 
   function stepsDone(b) {
-    if (b.status === 'Live' || b.shopStatus === 'Pattern Registered') return 3;
-    if (b.shopStatus === 'Deactivated') return 1;
+    if (b.progress !== undefined) return b.progress;
     if (b.status === 'EIN Transfer') return 1;
+    if (b.shopStatus === 'Deactivated') return 1;
+    if (b.shopStatus === 'Not Created') return 0;
     return 0;
   }
 
