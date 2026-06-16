@@ -472,6 +472,90 @@ const MS_STAGE_STYLE = {
 };
 const MS_STAGE_ORDER = ['Signing','Onboarding','Active','Sellable','Paused','Churned'];
 
+// ─── ABG BRANDS DATA ─────────────────────────────────────────────────────────
+// Add new ABG brands here — they'll appear automatically in the ABG tab
+const ABG_BRANDS = [
+  // ── Live ──────────────────────────────────────────────────────────────────
+  { brand:'Forever 21',        opco:'ABG Direct',               status:'Live',        shopStatus:'Pattern Registered',
+    currentWork:'Mark Edwards assortment (610 SKUs) — image issues being resolved. Brands Unlimited (198 SKUs) — images/descriptions missing. Brands Unlimited (810 SKUs) — ~400 listings have incorrect/missing images.',
+    blocker:'Images/descriptions missing on multiple assortments', skus:'1618+', am:'' },
+  { brand:'Volcom',             opco:'ABG - Blue Sage',           status:'Live',        shopStatus:'Pattern Registered',
+    currentWork:'Working on 4th assortment (231 SKUs). Waiting on images from brand.',
+    blocker:'Waiting on brand images', skus:'231', am:'' },
+  { brand:'Roxy',               opco:'ABG - Blue Sage',           status:'Live',        shopStatus:'Pattern Registered',
+    currentWork:'Working on YGI assortment (426 SKUs). Titles and images are mismatched.',
+    blocker:'Title/image mismatch', skus:'426', am:'' },
+  { brand:'Spyder',             opco:'ABG - Levy Group',          status:'Live',        shopStatus:'Pattern Registered',
+    currentWork:'Master file created. Products uploaded in Draft status. Inventory syncing.',
+    blocker:'Waiting on Brand Authorization + email ID for verification code', skus:'', am:'' },
+  { brand:'Nautica',            opco:'ABG - Levy Group',          status:'Live',        shopStatus:'Pattern Registered',
+    currentWork:'Shop created. Waiting on first assortment details from brand.',
+    blocker:'Waiting on brand assortment', skus:'', am:'' },
+  // ── In Progress ───────────────────────────────────────────────────────────
+  { brand:'Shaq',               opco:'ABG - Falic Fashion',       status:'In Progress', shopStatus:'Deactivated',
+    currentWork:'Shop setup complete. Product onboarding planned end of week. Shop goes live June.',
+    blocker:'Waiting on FDA doc from brand — check inventory with Matt H', skus:'', am:'' },
+  { brand:'IZOD',               opco:'Unified Leather (Carolyn Benitez)', status:'In Progress', shopStatus:'Deactivated',
+    currentWork:'Shop created. Shelf setup task to be created. Currently onboarding alongside Brooks Brothers.',
+    blocker:'Waiting on variation images + category doc', skus:'', am:'' },
+  { brand:'Brooks Brothers',    opco:'Unified Leather (Carolyn Benitez)', status:'In Progress', shopStatus:'Deactivated',
+    currentWork:'Same OpCo as IZOD. Shelf setup task to be created. No separate blockers flagged.',
+    blocker:'Waiting on variation images + category doc', skus:'', am:'' },
+  { brand:'Aeropostale',        opco:'ABG - Maesa',               status:'In Progress', shopStatus:'Deactivated',
+    currentWork:'Fragrance category. Product onboarding in progress. Product information available.',
+    blocker:'Waiting on FDA doc from brand — pushing shop live on Aeropostale shop, check on inventory (no PO)', skus:'', am:'' },
+  { brand:'RVCA',               opco:'ABG - Blue Sage',           status:'In Progress', shopStatus:'Not Created',
+    currentWork:'Working on first assortment. Product info missing.',
+    blocker:'Images, descriptions, dimensions all missing', skus:'', am:'' },
+  { brand:'Volcom (Blue Sage)', opco:'ABG - Blue Sage',           status:'In Progress', shopStatus:'Not Created',
+    currentWork:'Working on first assortment (29 SKUs).',
+    blocker:'Titles and images missing', skus:'29', am:'' },
+  { brand:'Roxy (Blue Sage)',   opco:'ABG - Blue Sage',           status:'In Progress', shopStatus:'Not Created',
+    currentWork:'Working on first assortment.',
+    blocker:'Product information not yet received from brand', skus:'', am:'' },
+  // ── Not Started ───────────────────────────────────────────────────────────
+  { brand:'Hunter',             opco:'Centric Brands',            status:'Not Started', shopStatus:'Not Created',
+    currentWork:'Shop creation stalled since February. No updates since.',
+    blocker:'TikTok whitelist of Pattern email pending — no MU/COGS/margin data on file', skus:'', am:'' },
+  { brand:'Dockers',            opco:'Centric Brands (Josh Yang)', status:'Not Started', shopStatus:'Not Created',
+    currentWork:'Onboarding meeting done in April. No follow-up yet. Needs a nudge.',
+    blocker:'No follow-up after April meeting', skus:'', am:'' },
+  { brand:'Eddie Bauer',        opco:'ABG - KMI Brands',          status:'Not Started', shopStatus:'Not Created',
+    currentWork:'EIN Transfer target: end of August. No onboarding info received.',
+    blocker:'No info received from AM or sales team', skus:'', am:'' },
+  { brand:'Ted Baker',          opco:'ABG - KMI Brands',          status:'Not Started', shopStatus:'Not Created',
+    currentWork:'Assortment selected but PO not placed. No product info shared.',
+    blocker:'PO not placed; no product info', skus:'', am:'' },
+  { brand:'Vince',              opco:'ABG - KMI Brands',          status:'Not Started', shopStatus:'Not Created',
+    currentWork:'Shop not yet created. No onboarding information received.',
+    blocker:'No info received', skus:'', am:'' },
+  { brand:'Vitalist (Reebok Smart Watch)', opco:'ABG - YGI Group', status:'Not Started', shopStatus:'Not Created',
+    currentWork:'Push listings live on CandySpot.',
+    blocker:'Need CS from Nextwave', skus:'', am:'' },
+  // ── EIN Transfer ─────────────────────────────────────────────────────────
+  { brand:'Champion',           opco:'ABG - O5 Group',            status:'EIN Transfer', shopStatus:'Live (other entity)',
+    currentWork:'Agency deal target: end of July. Live but operated by another entity.',
+    blocker:'EIN Transfer or switch to agency deal required', skus:'', am:'' },
+  { brand:'Reebok',             opco:'ABG - Levy Group',          status:'EIN Transfer', shopStatus:'Live (other entity)',
+    currentWork:'Agency deal target: end of July. Live but operated by another entity.',
+    blocker:'EIN Transfer or switch to agency deal required', skus:'', am:'' },
+  { brand:'GUESS Men\'s',       opco:'ABG - Direct',              status:'EIN Transfer', shopStatus:'Live (other entity)',
+    currentWork:'Push to take over now. Live but operated by another entity.',
+    blocker:'EIN Transfer needed', skus:'', am:'' },
+  { brand:"GUESS Women's",      opco:'ABG - Direct',              status:'EIN Transfer', shopStatus:'Live (other entity)',
+    currentWork:'Live but operated by another entity.',
+    blocker:'EIN Transfer needed', skus:'', am:'' },
+  { brand:'Quiksilver',         opco:'ABG - Blue Sage',           status:'EIN Transfer', shopStatus:'Live (other entity)',
+    currentWork:'Live but operated by another entity.',
+    blocker:'EIN Transfer needed', skus:'', am:'' },
+  { brand:'Billabong',          opco:'ABG - Blue Sage',           status:'EIN Transfer', shopStatus:'Live (other entity)',
+    currentWork:'Live but operated by another entity.',
+    blocker:'EIN Transfer needed', skus:'', am:'' },
+  { brand:'Juicy Couture',      opco:'ABG - NYC Alliance',        status:'EIN Transfer', shopStatus:'Live (other entity)',
+    currentWork:'Agency deal target: end of August. Live but operated by another entity.',
+    blocker:'EIN Transfer or switch to agency deal required (agency?) — end of August goal', skus:'', am:'' },
+];
+
 // ─── STATE ───────────────────────────────────────────────────────────────────
 let _allBrands         = [];
 let _onboardedBrands   = [];
@@ -485,6 +569,7 @@ let _pipelineStageFilter = null;
 let _contractFilters = { am: null, expiry: null, health: null };
 let _contractSort    = 'endDate';
 let _contractSortDir = 1;
+let _abgFilter       = null;  // null = all, or 'Live'/'In Progress'/'Not Started'/'EIN Transfer'
 
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
 const daysSince = d => d ? Math.floor((Date.now() - new Date(d)) / 86400000) : null;
@@ -753,7 +838,7 @@ function setActiveTab(tab) {
 }
 
 function updateTabView() {
-  ['onboarding','offboarding','pipeline','contracts','summary'].forEach(t => {
+  ['onboarding','offboarding','pipeline','contracts','summary','abg'].forEach(t => {
     const el = document.getElementById(t + '-view');
     if (el) el.style.display = (_activeTab === t) ? '' : 'none';
   });
@@ -1559,6 +1644,83 @@ function refreshContracts() {
   el.innerHTML = html;
 }
 
+// ─── ABG VIEW ────────────────────────────────────────────────────────────────
+function renderABG() {
+  const el = document.getElementById('abg-content');
+  if (!el) return;
+
+  const STATUS_CFG = {
+    'Live':         { bg:'#dcfce7', border:'#16a34a', color:'#15803d', dot:'#16a34a', label:'Live ✓' },
+    'In Progress':  { bg:'#fffbeb', border:'#f59e0b', color:'#92400e', dot:'#f59e0b', label:'In Progress' },
+    'Not Started':  { bg:'#f9fafb', border:'#9ca3af', color:'#374151', dot:'#9ca3af', label:'Not Started' },
+    'EIN Transfer': { bg:'#eff6ff', border:'#3b82f6', color:'#1e40af', dot:'#3b82f6', label:'EIN Transfer' },
+  };
+
+  const counts = {};
+  Object.keys(STATUS_CFG).forEach(s => counts[s] = ABG_BRANDS.filter(b => b.status === s).length);
+  const filtered = _abgFilter ? ABG_BRANDS.filter(b => b.status === _abgFilter) : ABG_BRANDS;
+
+  let html = '';
+
+  // ── KPI tiles ──────────────────────────────────────────────────────────────
+  html += `<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:16px">`;
+  Object.entries(STATUS_CFG).forEach(([s, c]) => {
+    const active = _abgFilter === s;
+    html += `<div onclick="_abgFilter=_abgFilter==='${s}'?null:'${s}';renderABG()" style="cursor:pointer;background:${c.bg};border:2px solid ${c.border};border-radius:10px;padding:14px 16px;box-shadow:${active?`0 0 0 3px ${c.border}44,0 2px 8px ${c.border}33`:`0 2px 8px ${c.border}22`};transition:box-shadow .15s">
+      <div style="font-size:11px;font-weight:700;color:${c.color};margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em">${c.label}</div>
+      <div style="font-size:30px;font-weight:800;color:${c.color};line-height:1">${counts[s]}</div>
+      <div style="font-size:11px;color:${c.color};margin-top:3px;opacity:.6">brand${counts[s]!==1?'s':''} · click to filter</div>
+    </div>`;
+  });
+  html += `</div>`;
+
+  // ── Filter pill if active ──────────────────────────────────────────────────
+  if (_abgFilter) {
+    const c = STATUS_CFG[_abgFilter];
+    html += `<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+      <span style="font-size:12px;font-weight:600;color:${c.color};background:${c.bg};border:1px solid ${c.border};padding:3px 10px;border-radius:20px">${_abgFilter}</span>
+      <button onclick="_abgFilter=null;renderABG()" style="font-size:11px;padding:2px 8px;border:1px solid #e5e7eb;border-radius:20px;background:none;cursor:pointer;color:#888">✕ Clear filter</button>
+      <span style="font-size:12px;color:#aaa">${filtered.length} of ${ABG_BRANDS.length} brands</span>
+    </div>`;
+  } else {
+    html += `<div style="font-size:12px;color:#aaa;margin-bottom:12px">${ABG_BRANDS.length} brands total — click a tile to filter</div>`;
+  }
+
+  // ── Kanban columns ─────────────────────────────────────────────────────────
+  const columnsToShow = _abgFilter ? [_abgFilter] : Object.keys(STATUS_CFG);
+  html += `<div style="display:grid;grid-template-columns:repeat(${columnsToShow.length},minmax(0,1fr));gap:12px;align-items:start">`;
+
+  columnsToShow.forEach(status => {
+    const c   = STATUS_CFG[status];
+    const col = ABG_BRANDS.filter(b => b.status === status);
+    html += `<div style="background:${c.bg};border:1.5px solid ${c.border}55;border-radius:10px;overflow:hidden">
+      <div style="padding:10px 14px;background:${c.bg};border-bottom:1.5px solid ${c.border}55;display:flex;align-items:center;gap:8px">
+        <span style="width:9px;height:9px;border-radius:50%;background:${c.dot};display:inline-block;flex-shrink:0"></span>
+        <span style="font-size:12px;font-weight:700;color:${c.color}">${c.label}</span>
+        <span style="font-size:11px;font-weight:500;margin-left:auto;background:white;color:${c.color};border:1px solid ${c.border}55;padding:1px 7px;border-radius:20px">${col.length}</span>
+      </div>
+      <div style="padding:10px;display:flex;flex-direction:column;gap:8px">
+        ${col.length === 0 ? `<div style="font-size:12px;color:#aaa;text-align:center;padding:16px">No brands</div>` : ''}
+        ${col.map(b => `
+          <div style="background:white;border:1px solid ${c.border}44;border-radius:8px;padding:12px 13px">
+            <div style="font-weight:700;font-size:13px;color:#111;margin-bottom:3px">${b.brand}</div>
+            <div style="font-size:11px;color:#6b7280;margin-bottom:8px">${b.opco}${b.skus ? ` · <span style="color:#1d4ed8;font-weight:500">${b.skus} SKUs</span>` : ''}</div>
+            <div style="font-size:11px;color:#374151;margin-bottom:6px;line-height:1.5">${b.currentWork}</div>
+            ${b.blocker ? `<div style="font-size:11px;padding:4px 8px;background:#fef2f2;border:1px solid #fecaca;border-radius:5px;color:#b91c1c">⚠ ${b.blocker}</div>` : ''}
+            <div style="margin-top:8px;padding-top:7px;border-top:1px solid #f3f4f6;display:flex;align-items:center;gap:6px">
+              <span style="font-size:10px;font-weight:500;padding:2px 7px;border-radius:3px;background:${c.bg};color:${c.color};border:1px solid ${c.border}55">${b.shopStatus}</span>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+  });
+
+  html += `</div>`;
+  html += `<div style="font-size:11px;color:#aaa;margin-top:16px">To add a new ABG brand, update the <code>ABG_BRANDS</code> array in the source code — it will appear here automatically.</div>`;
+
+  el.innerHTML = html;
+}
+
 // ─── FULL DASHBOARD RENDER ───────────────────────────────────────────────────
 function renderDashboard(brands, offboardingBrands = []) {
   _allBrands         = brands.filter(b => !b.completed);
@@ -1607,6 +1769,7 @@ function renderDashboard(brands, offboardingBrands = []) {
       <button class="tab-btn ${_activeTab==='pipeline'?'active':''}"    data-tab="pipeline"    onclick="setActiveTab('pipeline')">Pipeline</button>
       <button class="tab-btn ${_activeTab==='contracts'?'active':''}"   data-tab="contracts"   onclick="setActiveTab('contracts')">Master</button>
       <button class="tab-btn ${_activeTab==='summary'?'active':''}"     data-tab="summary"     onclick="setActiveTab('summary')">Summary</button>
+      <button class="tab-btn ${_activeTab==='abg'?'active':''}"         data-tab="abg"         onclick="setActiveTab('abg')">ABG</button>
     </div>
 
     <!-- ONBOARDING VIEW -->
@@ -1788,6 +1951,19 @@ function renderDashboard(brands, offboardingBrands = []) {
       <div id="summary-content"></div>
     </div>
 
+    <!-- ABG VIEW -->
+    <div id="abg-view" style="display:none">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <div class="onboarding-status">
+          <span class="pill pill-blue">ABG Portfolio · ${ABG_BRANDS.length} brands</span>
+        </div>
+        <div style="margin-left:auto;display:flex;gap:10px">
+          <span style="font-size:12px;color:#aaa;align-self:center">Static · update ABG_BRANDS to add brands</span>
+        </div>
+      </div>
+      <div id="abg-content"></div>
+    </div>
+
     <div class="footer">TikTok Shop OPS tracker · Pattern Operations · Refreshes on load</div>
   `;
 
@@ -1796,6 +1972,7 @@ function renderDashboard(brands, offboardingBrands = []) {
   renderPipelineView();
   refreshContracts();
   renderSummary();
+  renderABG();
   updateTabView();
 }
 
