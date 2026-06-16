@@ -569,7 +569,9 @@ let _pipelineStageFilter = null;
 let _contractFilters = { am: null, expiry: null, health: null };
 let _contractSort    = 'endDate';
 let _contractSortDir = 1;
-let _abgFilter       = null;  // null = all, or 'Live'/'In Progress'/'Not Started'/'EIN Transfer'
+let _abgFilter       = null;
+let _abgSearch       = '';
+let _abgExpanded     = new Set();
 
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
 const daysSince = d => d ? Math.floor((Date.now() - new Date(d)) / 86400000) : null;
@@ -1645,78 +1647,186 @@ function refreshContracts() {
 }
 
 // ─── ABG VIEW ────────────────────────────────────────────────────────────────
+function toggleAbgExpand(brand) {
+  const key = brand;
+  if (_abgExpanded.has(key)) _abgExpanded.delete(key); else _abgExpanded.add(key);
+  renderABG();
+}
+
 function renderABG() {
   const el = document.getElementById('abg-content');
   if (!el) return;
 
   const STATUS_CFG = {
-    'Live':         { bg:'#dcfce7', border:'#16a34a', color:'#15803d', dot:'#16a34a', label:'Live ✓' },
-    'In Progress':  { bg:'#fffbeb', border:'#f59e0b', color:'#92400e', dot:'#f59e0b', label:'In Progress' },
-    'Not Started':  { bg:'#f9fafb', border:'#9ca3af', color:'#374151', dot:'#9ca3af', label:'Not Started' },
-    'EIN Transfer': { bg:'#eff6ff', border:'#3b82f6', color:'#1e40af', dot:'#3b82f6', label:'EIN Transfer' },
+    'Live':         { bg:'#dcfce7', border:'#16a34a', color:'#15803d', icon:'✓', strip:'#16a34a' },
+    'In Progress':  { bg:'#fffbeb', border:'#f59e0b', color:'#92400e', icon:'⟳', strip:'#f59e0b' },
+    'Not Started':  { bg:'#f9fafb', border:'#d1d5db', color:'#374151', icon:'○', strip:'#9ca3af' },
+    'EIN Transfer': { bg:'#eff6ff', border:'#3b82f6', color:'#1e40af', icon:'⇄', strip:'#3b82f6' },
   };
+
+  function stepsDone(b) {
+    if (b.status === 'Live' || b.shopStatus === 'Pattern Registered') return 3;
+    if (b.shopStatus === 'Deactivated') return 1;
+    if (b.status === 'EIN Transfer') return 1;
+    return 0;
+  }
 
   const counts = {};
   Object.keys(STATUS_CFG).forEach(s => counts[s] = ABG_BRANDS.filter(b => b.status === s).length);
-  const filtered = _abgFilter ? ABG_BRANDS.filter(b => b.status === _abgFilter) : ABG_BRANDS;
+
+  let filtered = ABG_BRANDS.slice();
+  if (_abgFilter) filtered = filtered.filter(b => b.status === _abgFilter);
+  if (_abgSearch) {
+    const q = _abgSearch.toLowerCase();
+    filtered = filtered.filter(b => b.brand.toLowerCase().includes(q) || b.opco.toLowerCase().includes(q));
+  }
 
   let html = '';
 
   // ── KPI tiles ──────────────────────────────────────────────────────────────
-  html += `<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:16px">`;
+  html += `<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:14px">`;
   Object.entries(STATUS_CFG).forEach(([s, c]) => {
     const active = _abgFilter === s;
-    html += `<div onclick="_abgFilter=_abgFilter==='${s}'?null:'${s}';renderABG()" style="cursor:pointer;background:${c.bg};border:2px solid ${c.border};border-radius:10px;padding:14px 16px;box-shadow:${active?`0 0 0 3px ${c.border}44,0 2px 8px ${c.border}33`:`0 2px 8px ${c.border}22`};transition:box-shadow .15s">
-      <div style="font-size:11px;font-weight:700;color:${c.color};margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em">${c.label}</div>
-      <div style="font-size:30px;font-weight:800;color:${c.color};line-height:1">${counts[s]}</div>
-      <div style="font-size:11px;color:${c.color};margin-top:3px;opacity:.6">brand${counts[s]!==1?'s':''} · click to filter</div>
+    html += `<div onclick="_abgFilter=_abgFilter==='${s}'?null:'${s}';renderABG()"
+      style="cursor:pointer;user-select:none;border-radius:14px;padding:16px 18px;
+             background:${active ? c.bg : '#fff'};
+             border:2px solid ${active ? c.border : '#e5e7eb'};
+             box-shadow:${active ? `0 0 0 3px ${c.border}33,0 4px 12px ${c.border}22` : '0 1px 4px rgba(0,0,0,.05)'};
+             transition:all .18s ease">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <span style="font-size:11px;font-weight:700;color:${active?c.color:'#6b7280'};text-transform:uppercase;letter-spacing:.06em">${s}</span>
+        <span style="width:26px;height:26px;border-radius:8px;background:${active?c.border+'22':'#f3f4f6'};border:1.5px solid ${active?c.border:'#e5e7eb'};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:${active?c.color:'#6b7280'}">${c.icon}</span>
+      </div>
+      <div style="font-size:34px;font-weight:900;color:${active?c.color:'#111'};line-height:1;letter-spacing:-.02em">${counts[s]}</div>
+      <div style="font-size:11px;color:${active?c.color:'#9ca3af'};margin-top:4px">${counts[s]===1?'brand':'brands'}</div>
     </div>`;
   });
   html += `</div>`;
 
-  // ── Filter pill if active ──────────────────────────────────────────────────
-  if (_abgFilter) {
-    const c = STATUS_CFG[_abgFilter];
-    html += `<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
-      <span style="font-size:12px;font-weight:600;color:${c.color};background:${c.bg};border:1px solid ${c.border};padding:3px 10px;border-radius:20px">${_abgFilter}</span>
-      <button onclick="_abgFilter=null;renderABG()" style="font-size:11px;padding:2px 8px;border:1px solid #e5e7eb;border-radius:20px;background:none;cursor:pointer;color:#888">✕ Clear filter</button>
-      <span style="font-size:12px;color:#aaa">${filtered.length} of ${ABG_BRANDS.length} brands</span>
-    </div>`;
-  } else {
-    html += `<div style="font-size:12px;color:#aaa;margin-bottom:12px">${ABG_BRANDS.length} brands total — click a tile to filter</div>`;
+  // ── Search + filter bar ────────────────────────────────────────────────────
+  html += `<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+    <div style="flex:1;position:relative">
+      <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#9ca3af;font-size:13px">⌕</span>
+      <input type="text" placeholder="Search brand or OpCo…" value="${_abgSearch.replace(/"/g,'&quot;')}"
+        oninput="_abgSearch=this.value;renderABG()"
+        style="width:100%;padding:8px 12px 8px 28px;border:1.5px solid #e5e7eb;border-radius:9px;font-size:13px;outline:none;background:#fff;transition:border-color .15s"
+        onfocus="this.style.borderColor='#3b82f6'" onblur="this.style.borderColor='#e5e7eb'">
+    </div>
+    ${_abgFilter ? `
+      <button onclick="_abgFilter=null;renderABG()"
+        style="display:flex;align-items:center;gap:5px;padding:8px 12px;border:1.5px solid ${STATUS_CFG[_abgFilter].border};border-radius:9px;background:${STATUS_CFG[_abgFilter].bg};cursor:pointer;font-size:12px;font-weight:600;color:${STATUS_CFG[_abgFilter].color}">
+        ${_abgFilter} <span style="opacity:.6">✕</span>
+      </button>` : ''}
+    ${_abgSearch ? `
+      <button onclick="_abgSearch='';renderABG()"
+        style="padding:8px 12px;border:1.5px solid #e5e7eb;border-radius:9px;background:#fff;cursor:pointer;font-size:12px;color:#6b7280">
+        Clear ✕
+      </button>` : ''}
+    <span style="font-size:12px;color:#9ca3af;white-space:nowrap;padding:0 4px">${filtered.length} / ${ABG_BRANDS.length}</span>
+  </div>`;
+
+  if (!filtered.length) {
+    html += `<div style="text-align:center;padding:60px 20px;color:#9ca3af;font-size:13px">No brands match your search.</div>`;
+    el.innerHTML = html;
+    return;
   }
 
-  // ── Kanban columns ─────────────────────────────────────────────────────────
-  const columnsToShow = _abgFilter ? [_abgFilter] : Object.keys(STATUS_CFG);
-  html += `<div style="display:grid;grid-template-columns:repeat(${columnsToShow.length},minmax(0,1fr));gap:12px;align-items:start">`;
+  // ── Brand cards grid ───────────────────────────────────────────────────────
+  html += `<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px">`;
 
-  columnsToShow.forEach(status => {
-    const c   = STATUS_CFG[status];
-    const col = ABG_BRANDS.filter(b => b.status === status);
-    html += `<div style="background:${c.bg};border:1.5px solid ${c.border}55;border-radius:10px;overflow:hidden">
-      <div style="padding:10px 14px;background:${c.bg};border-bottom:1.5px solid ${c.border}55;display:flex;align-items:center;gap:8px">
-        <span style="width:9px;height:9px;border-radius:50%;background:${c.dot};display:inline-block;flex-shrink:0"></span>
-        <span style="font-size:12px;font-weight:700;color:${c.color}">${c.label}</span>
-        <span style="font-size:11px;font-weight:500;margin-left:auto;background:white;color:${c.color};border:1px solid ${c.border}55;padding:1px 7px;border-radius:20px">${col.length}</span>
-      </div>
-      <div style="padding:10px;display:flex;flex-direction:column;gap:8px">
-        ${col.length === 0 ? `<div style="font-size:12px;color:#aaa;text-align:center;padding:16px">No brands</div>` : ''}
-        ${col.map(b => `
-          <div style="background:white;border:1px solid ${c.border}44;border-radius:8px;padding:12px 13px">
-            <div style="font-weight:700;font-size:13px;color:#111;margin-bottom:3px">${b.brand}</div>
-            <div style="font-size:11px;color:#6b7280;margin-bottom:8px">${b.opco}${b.skus ? ` · <span style="color:#1d4ed8;font-weight:500">${b.skus} SKUs</span>` : ''}</div>
-            <div style="font-size:11px;color:#374151;margin-bottom:6px;line-height:1.5">${b.currentWork}</div>
-            ${b.blocker ? `<div style="font-size:11px;padding:4px 8px;background:#fef2f2;border:1px solid #fecaca;border-radius:5px;color:#b91c1c">⚠ ${b.blocker}</div>` : ''}
-            <div style="margin-top:8px;padding-top:7px;border-top:1px solid #f3f4f6;display:flex;align-items:center;gap:6px">
-              <span style="font-size:10px;font-weight:500;padding:2px 7px;border-radius:3px;background:${c.bg};color:${c.color};border:1px solid ${c.border}55">${b.shopStatus}</span>
-            </div>
-          </div>`).join('')}
+  filtered.forEach(b => {
+    const c     = STATUS_CFG[b.status];
+    const color = nameColor(b.brand);
+    const ini   = b.brand[0].toUpperCase();
+    const exp   = _abgExpanded.has(b.brand);
+    const done  = stepsDone(b);
+    const STEPS = b.status === 'EIN Transfer'
+      ? ['Existing', 'EIN / Agency', 'Pattern Live']
+      : ['Shop Setup', 'Products', 'Live'];
+
+    const checkSvg = `<svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2L7.5 2.5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+    html += `
+    <div onclick="toggleAbgExpand('${b.brand.replace(/'/g,"\\'")}')"
+      style="cursor:pointer;background:#fff;border-radius:14px;overflow:hidden;
+             border:1.5px solid ${exp ? c.border : '#e5e7eb'};
+             box-shadow:${exp ? `0 6px 20px ${c.border}33` : '0 1px 4px rgba(0,0,0,.05)'};
+             transition:all .18s ease"
+      onmouseover="if(!${exp}){this.style.boxShadow='0 4px 14px rgba(0,0,0,.1)';this.style.borderColor='${c.border}88'}"
+      onmouseout="this.style.boxShadow='${exp?`0 6px 20px ${c.border}33`:'0 1px 4px rgba(0,0,0,.05)'}';this.style.borderColor='${exp?c.border:'#e5e7eb'}'">
+
+      <!-- Color strip -->
+      <div style="height:5px;background:linear-gradient(90deg,${c.strip},${c.strip}99)"></div>
+
+      <div style="padding:14px">
+        <!-- Brand header -->
+        <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:12px">
+          <div style="width:38px;height:38px;border-radius:11px;background:${color}15;border:1.5px solid ${color}30;
+                      display:flex;align-items:center;justify-content:center;
+                      font-size:16px;font-weight:900;color:${color};flex-shrink:0;letter-spacing:-.02em">${ini}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-weight:700;font-size:13px;color:#111;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3">${b.brand}</div>
+            <div style="font-size:11px;color:#6b7280;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${b.opco}</div>
+          </div>
+          <div style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:7px;
+                      background:${c.bg};color:${c.color};border:1.5px solid ${c.border}55;
+                      white-space:nowrap;flex-shrink:0">${c.icon} ${b.status}</div>
+        </div>
+
+        <!-- Progress track -->
+        <div style="display:flex;align-items:flex-start;margin-bottom:12px;gap:0">
+          ${STEPS.map((step, i) => {
+            const isDone   = i < done;
+            const isCurrent = i === done;
+            const dotBg    = isDone ? c.strip : 'white';
+            const dotBorder= isDone || isCurrent ? c.strip : '#d1d5db';
+            const txtColor = isDone ? c.color : isCurrent ? c.color : '#9ca3af';
+            const weight   = isDone || isCurrent ? '600' : '400';
+            return `
+              <div style="display:flex;flex-direction:column;align-items:center;flex:1">
+                <div style="width:22px;height:22px;border-radius:50%;background:${dotBg};border:2px solid ${dotBorder};
+                            display:flex;align-items:center;justify-content:center;transition:all .2s">
+                  ${isDone ? checkSvg : `<div style="width:7px;height:7px;border-radius:50%;background:${isCurrent?c.strip:'#e5e7eb'}"></div>`}
+                </div>
+                <div style="font-size:9px;color:${txtColor};margin-top:3px;font-weight:${weight};text-align:center;line-height:1.3;max-width:52px">${step}</div>
+              </div>
+              ${i < STEPS.length - 1 ? `<div style="flex:0 0 auto;width:100%;max-width:24px;height:2px;background:${isDone?c.strip:'#e5e7eb'};margin-top:10px;border-radius:2px"></div>` : ''}
+            `;
+          }).join('')}
+        </div>
+
+        <!-- Tags row -->
+        <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-bottom:${exp||b.blocker?'10px':'0'}">
+          <span style="font-size:10px;padding:2px 8px;border-radius:6px;background:#f3f4f6;color:#4b5563;font-weight:500">${b.shopStatus}</span>
+          ${b.skus ? `<span style="font-size:10px;padding:2px 8px;border-radius:6px;background:#eff6ff;color:#1d4ed8;font-weight:700">${b.skus} SKUs</span>` : ''}
+          <span style="margin-left:auto;font-size:10px;color:#9ca3af;transition:transform .2s;display:inline-block;transform:${exp?'rotate(180deg)':'rotate(0deg)'}"">▾</span>
+        </div>
+
+        <!-- Blocker preview (collapsed) -->
+        ${!exp && b.blocker ? `
+          <div style="font-size:10px;color:#dc2626;background:#fef2f2;border:1px solid #fecaca;
+                      padding:5px 9px;border-radius:7px;line-height:1.4;
+                      white-space:nowrap;overflow:hidden;text-overflow:ellipsis">⚠ ${b.blocker}</div>
+        ` : ''}
+
+        <!-- Expanded detail -->
+        ${exp ? `
+          <div style="border-top:1px solid #f3f4f6;padding-top:10px;animation:fadeIn .15s ease">
+            <div style="font-size:11px;font-weight:700;color:#374151;margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em">Current Work</div>
+            <div style="font-size:12px;color:#4b5563;line-height:1.65;margin-bottom:${b.blocker?'10px':'0'}">${b.currentWork}</div>
+            ${b.blocker ? `
+              <div style="background:#fef2f2;border:1.5px solid #fecaca;border-radius:9px;padding:10px 12px">
+                <div style="font-size:10px;font-weight:800;color:#dc2626;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">⚠ Blocker</div>
+                <div style="font-size:12px;color:#b91c1c;line-height:1.55">${b.blocker}</div>
+              </div>` : ''}
+          </div>
+        ` : ''}
       </div>
     </div>`;
   });
 
-  html += `</div>`;
-  html += `<div style="font-size:11px;color:#aaa;margin-top:16px">To add a new ABG brand, update the <code>ABG_BRANDS</code> array in the source code — it will appear here automatically.</div>`;
+  html += `</div>
+  <style>@keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}</style>`;
 
   el.innerHTML = html;
 }
