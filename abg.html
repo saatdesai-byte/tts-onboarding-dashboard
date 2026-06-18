@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ABG × Pattern — TikTok Shop Portfolio Tracker</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f6fa;color:#111;min-height:100vh}
+  input:focus{outline:2px solid #3b82f6;outline-offset:-1px}
+  button{cursor:pointer;font-family:inherit}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+</style>
+</head>
+<body>
+
+<!-- ─── HEADER ─── -->
+<div style="background:linear-gradient(135deg,#0f172a 0%,#1e293b 60%,#0f172a 100%);padding:28px 32px 24px;position:sticky;top:0;z-index:100;box-shadow:0 4px 24px rgba(0,0,0,.3)">
+  <div style="max-width:1400px;margin:0 auto">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:14px">
+        <div style="width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#3b82f6,#6366f1);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;color:white;box-shadow:0 4px 12px rgba(59,130,246,.4)">P</div>
+        <div>
+          <div style="font-size:18px;font-weight:800;color:white;letter-spacing:-.02em">ABG × Pattern</div>
+          <div style="font-size:12px;color:#94a3b8;font-weight:500">TikTok Shop Portfolio Tracker</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <span id="hdr-count" style="font-size:12px;color:#64748b;background:#1e293b;padding:5px 12px;border-radius:20px;border:1px solid #334155"></span>
+        <span id="hdr-updated" style="font-size:11px;color:#475569;background:#1e293b;padding:5px 12px;border-radius:20px;border:1px solid #334155"></span>
+        <div style="display:flex;gap:8px">
+          <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:#94a3b8"><span style="width:10px;height:10px;border-radius:50%;background:#dc2626;display:inline-block"></span>Critical</div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:#94a3b8"><span style="width:10px;height:10px;border-radius:50%;background:#d97706;display:inline-block"></span>Urgent</div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:#94a3b8"><span style="width:10px;height:10px;border-radius:50%;background:#16a34a;display:inline-block"></span>On Track</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="max-width:1400px;margin:0 auto;padding:24px 20px">
+
+  <!-- KPI tiles -->
+  <div id="kpi-row" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:20px"></div>
+
+  <!-- Search + filter -->
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:18px;flex-wrap:wrap">
+    <div style="flex:1;min-width:220px;position:relative">
+      <span style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:#9ca3af;font-size:14px">🔍</span>
+      <input id="search-input" type="text" placeholder="Search brand or OpCo…"
+        oninput="applyFilters()"
+        style="width:100%;padding:9px 12px 9px 32px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:13px;background:#fff;transition:border-color .15s">
+    </div>
+    <!-- Priority filter buttons -->
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      <button id="pf-critical" onclick="togglePriFilter('critical')"
+        style="padding:7px 13px;border-radius:9px;border:1.5px solid #fca5a5;background:#fef2f2;color:#991b1b;font-size:12px;font-weight:700;transition:all .15s">
+        🔴 Critical
+      </button>
+      <button id="pf-urgent" onclick="togglePriFilter('urgent')"
+        style="padding:7px 13px;border-radius:9px;border:1.5px solid #fcd34d;background:#fffbeb;color:#92400e;font-size:12px;font-weight:700;transition:all .15s">
+        🟡 Urgent
+      </button>
+      <button id="pf-all" onclick="clearFilters()"
+        style="padding:7px 13px;border-radius:9px;border:1.5px solid #e5e7eb;background:#fff;color:#374151;font-size:12px;font-weight:600;transition:all .15s">
+        All
+      </button>
+    </div>
+    <span id="filter-count" style="font-size:12px;color:#9ca3af;padding:0 4px"></span>
+  </div>
+
+  <!-- Cards -->
+  <div id="cards-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px"></div>
+
+</div>
+
+<script>
+// ─── DATA ───────────────────────────────────────────────────────────────────
+const ABG_BRANDS = [
+  // ── Live ──
+  { brand:'Forever 21',        opco:'ABG Direct',               status:'Live',        shopStatus:'Pattern Registered', progress:2, priority:'urgent',
+    currentWork:'Active orders across 3 licensees. Brands Unlimited: F21 June ATS (PO 141694, 4,212 units) + July ATS (12,080 units, ship shifted to 8/15). Mark Edwards: High Summer (PO 141295, 8,500 units) + BTS Prebook (24,444 units due 6/29 for 7/15 Walmart BTS launch). Amazon 1P buy-up (16,127 units, requested 6/16).',
+    action:'Images/descriptions needed on Brands Unlimited assortments. BTS deadline 6/29.' },
+  { brand:'Volcom',             opco:'ABG - Levy Group',          status:'Live',        shopStatus:'Pattern Registered', progress:2, priority:'urgent',
+    currentWork:'Levy Group: Men\'s Swim 2026 active (POs 137415/137416/137418). Men\'s Swim ATS (PO 137419). Spring 2027 pre-books placed 6/17 (1,870 + 1,850 units).',
+    action:'2 product images still missing as of 6/18 — needed to complete listings.' },
+  { brand:'Roxy',               opco:'ABG - Levy Group',          status:'Live',        shopStatus:'Pattern Registered', progress:2, priority:'normal',
+    currentWork:'Summer Swim ATS (PO 139795, 771 units, shipped 5/15). Item setup sent 5/18. Centric Kids Spring 2027 pre-books placed (Girls Jan: 23,938 units; Girls Mar: 6,164 units).',
+    action:'Centric Brands Spring 2027 contract needs to be signed.' },
+  { brand:'Spyder',             opco:'ABG - Levy Group',          status:'Live',        shopStatus:'Pattern Registered', progress:2, priority:'urgent',
+    currentWork:'Men\'s Swim 2026 POs sent: May (PO 137378, 48u) + June (PO 137379, 48u) + July (PO 137380, 36u). 132 total swim units active.',
+    action:'Brand Authorization pending — email ID needed for TikTok Shop verification code.' },
+  { brand:'Nautica',            opco:'ABG - Levy Group',          status:'Live',        shopStatus:'Pattern Registered', progress:2, priority:'normal',
+    currentWork:'Fall 2026 Outerwear PO sent: Aug (438 units, $46,440) + Sept (138 units, $14,766) = 576 units total. Item setup info sent 5/11.',
+    action:'Next assortment details needed from brand for additional drops.' },
+  // ── In Progress ──
+  { brand:'Shaq',               opco:'ABG - Falic Fashion',       status:'In Progress', shopStatus:'Deactivated', progress:1, priority:'urgent',
+    currentWork:'Shop setup complete. Product onboarding in progress. Shop going live in June.',
+    action:'FDA documentation needed from brand. Inventory confirmation needed.' },
+  { brand:'IZOD',               opco:'Unified Leather',           status:'In Progress', shopStatus:'Deactivated', progress:1, priority:'normal',
+    currentWork:'Shop created. Shelf setup underway. Onboarding alongside Brooks Brothers.',
+    action:'Variation images and category documentation needed from licensee.' },
+  { brand:'Brooks Brothers',    opco:'Unified Leather',           status:'In Progress', shopStatus:'Deactivated', progress:1, priority:'normal',
+    currentWork:'Shop created. Shelf setup underway. Onboarding alongside IZOD.',
+    action:'Variation images and category documentation needed from licensee.' },
+  { brand:'Aeropostale',        opco:'ABG - Brands Unlimited',    status:'In Progress', shopStatus:'Deactivated', progress:1, priority:'normal',
+    currentWork:'Brands Unlimited orders placed: Aug (6,040 units, $69,783) + Sept (624 units, $7,584). Product information available.',
+    action:'FDA documentation needed for fragrance line. PO confirmation pending.' },
+  { brand:'RVCA',               opco:'ABG - Blue Sage',           status:'In Progress', shopStatus:'Not Created', progress:0, priority:'urgent',
+    currentWork:'Blue Sage: Men\'s Hats June ATS (1,317u) + Accessories (120u) + Q4 Set Orders. Item setup in progress.',
+    action:'Product images, descriptions, and dimensions needed from licensee to complete listings.' },
+  { brand:'Volcom (Blue Sage)', opco:'ABG - Blue Sage',           status:'In Progress', shopStatus:'Not Created', progress:0, priority:'urgent',
+    currentWork:'Blue Sage: Men\'s + Women\'s Accessories June ATS (1,104u) + Q4 Set Orders Oct–Dec (2,470u). Item setup in progress.',
+    action:'Titles and images needed from Blue Sage licensee to proceed.' },
+  { brand:'Roxy (Blue Sage)',   opco:'ABG - Blue Sage',           status:'In Progress', shopStatus:'Not Created', progress:0, priority:'normal',
+    currentWork:'Working on first assortment. Centric Brands Kids Swim & Tees pipeline (Spring 2027) also active.',
+    action:'Product information needed from brand to begin item setup.' },
+  { brand:'Lucky Brand',        opco:'ABG - Catalyst',           status:'In Progress', shopStatus:'Not Created', progress:0, priority:'urgent',
+    currentWork:'First orders placed 6/15/2026 via Catalyst: Men\'s Denim Oct ($20,587, 850u) + Nov ($3,422, 150u) + Women\'s Denim Nov ($117,565, 5,631u) = 6,631 units, $141,574 at cost.',
+    action:'Shop creation and item setup not yet started — need to begin onboarding process.' },
+  // ── Not Started ──
+  { brand:'Hunter',             opco:'Centric Brands',            status:'Not Started', shopStatus:'Not Created', progress:0, priority:'normal',
+    currentWork:'Fall 2026 order in pipeline: 135 units, Aug 1 ship date. Contract not yet signed.',
+    action:'Contract signature needed. TikTok Shop whitelisting of Pattern email pending.' },
+  { brand:'Dockers',            opco:'Centric Brands',            status:'Not Started', shopStatus:'Not Created', progress:0, priority:'normal',
+    currentWork:'Onboarding meeting completed in April. Awaiting follow-up.',
+    action:'Follow-up needed to restart onboarding process.' },
+  { brand:'Eddie Bauer',        opco:'ABG - KMI Brands',          status:'Not Started', shopStatus:'Not Created', progress:0, priority:'normal',
+    currentWork:'EIN Transfer target: end of August. No onboarding info received yet.',
+    action:'Onboarding information needed from brand/AM team.' },
+  { brand:'Ted Baker',          opco:'ABG - KMI Brands',          status:'Not Started', shopStatus:'Not Created', progress:0, priority:'normal',
+    currentWork:'Assortment selected but PO not yet placed. No product info shared.',
+    action:'PO placement and product information needed to begin.' },
+  { brand:'Vince',              opco:'Centric Brands',            status:'Not Started', shopStatus:'Not Created', progress:0, priority:'normal',
+    currentWork:'Centric Brands Fall 2026: Handbags & Accessories (3,855 units) — contract not yet signed.',
+    action:'Contract signature needed to begin onboarding.' },
+  { brand:'Vitalist (Reebok Smart Watch)', opco:'ABG - YGI Group', status:'Not Started', shopStatus:'Not Created', progress:0, priority:'urgent',
+    currentWork:'Pushing listings live on CandySpot. Awaiting compliance documentation.',
+    action:'CS documentation needed from Nextwave to proceed.' },
+  { brand:'YGI Group Jewelry',  opco:'ABG - YGI Group',           status:'Not Started', shopStatus:'Not Created', progress:0, priority:'urgent',
+    currentWork:'Item setup sheet prepared. Product images still missing.',
+    action:'Product images needed — currently being produced by creative team.' },
+  { brand:'Kultured Misfits',   opco:'ABG - Falic Fashion',       status:'Not Started', shopStatus:'Not Created', progress:0, priority:'normal',
+    currentWork:'Onboarding not yet initiated.',
+    action:'Waiting for initial onboarding information from brand.' },
+  // ── EIN Transfer ──
+  { brand:'Champion',           opco:'ABG - O5 Group',            status:'EIN Transfer', shopStatus:'Live (other entity)', progress:1, priority:'critical',
+    currentWork:'Kids ATS via Oved O5: May (1,008u, images due 6/19 for 7/18 Walmart launch) + July (1,032u, ordered 6/16) + Girls Spring 2027 (1,200u). Pattern agency deal target: end of July.',
+    action:'🚨 Product images needed by 6/19 for 7/18 Walmart launch deadline. EIN Transfer or agency deal authorization required by end of July.' },
+  { brand:'Reebok',             opco:'ABG - Levy Group',          status:'EIN Transfer', shopStatus:'Live (other entity)', progress:1, priority:'urgent',
+    currentWork:'Currently live under another entity. Pattern agency deal target: end of July.',
+    action:'EIN Transfer or agency deal authorization needed by end of July.' },
+  { brand:'GUESS Men\'s',       opco:'ABG - Direct',              status:'EIN Transfer', shopStatus:'Live (other entity)', progress:1, priority:'urgent',
+    currentWork:'Q4 2026 orders placed: Aug–Oct (880u) + Holiday Nov–Jan (2,019u) + Guess Jeans Men\'s Holiday Nov–Jan (18,069u) = ~21K units. Currently under another entity.',
+    action:'EIN Transfer authorization needed — significant Q4 volume at stake.' },
+  { brand:"GUESS Women's",      opco:'ABG - Direct',              status:'EIN Transfer', shopStatus:'Live (other entity)', progress:1, priority:'urgent',
+    currentWork:'Q4 2026: YC Aug/Sept/Oct (10,720u) + Guess Jeans Hyunjin Fall (840u) + Women\'s Jeans Q3 (18,770u) + Holiday Nov–Jan (4,528u) + Guess Jeans Holiday (24,039u) = ~59K units. Currently under another entity.',
+    action:'EIN Transfer authorization needed — major Q4/Holiday volume at stake.' },
+  { brand:'Quiksilver',         opco:'ABG - Blue Sage',           status:'EIN Transfer', shopStatus:'Live (other entity)', progress:1, priority:'normal',
+    currentWork:'Blue Sage: Accessories June ATS (356u) + Q4 Set Orders (774u). Centric Kids Spring 2027 pre-books (Boys: 21,924u — not yet signed). Currently under another entity.',
+    action:'EIN Transfer needed. Centric Brands Spring 2027 contract signature needed.' },
+  { brand:'Billabong',          opco:'ABG - Blue Sage',           status:'EIN Transfer', shopStatus:'Live (other entity)', progress:1, priority:'normal',
+    currentWork:'Oved O5: Swim May (764u) + June (1,086u) active. Centric Kids Spring 2027 pre-books (Boys + Girls: 14,552u — not signed). Currently under another entity.',
+    action:'EIN Transfer needed. Centric Brands Spring 2027 contract signature needed.' },
+  { brand:'Juicy Couture',      opco:'ABG - NYC Alliance',        status:'EIN Transfer', shopStatus:'Live (other entity)', progress:1, priority:'urgent',
+    currentWork:'NYC Alliance active orders: July–Sept ($80K+, 2,592u) + TTS 8/15 ($45,230, 1,285u) + Oct–Jan bulk ($329K+, 7,960u) = 11,837 units. Item setup managed by Matt Whiting team. Pattern agency deal target: end of August.',
+    action:'EIN Transfer or agency deal authorization needed by end of August.' },
+];
+
+// ─── STATE ──────────────────────────────────────────────────────────────────
+let _filter    = null;   // status filter
+let _priFilter = null;   // priority filter
+let _search    = '';
+let _expanded  = new Set();
+
+// ─── CONFIG ─────────────────────────────────────────────────────────────────
+const STATUS_CFG = {
+  'Live':         { bg:'#dcfce7', border:'#16a34a', color:'#15803d', icon:'✓', strip:'#16a34a' },
+  'In Progress':  { bg:'#fffbeb', border:'#f59e0b', color:'#92400e', icon:'⟳', strip:'#f59e0b' },
+  'Not Started':  { bg:'#f9fafb', border:'#d1d5db', color:'#374151', icon:'○', strip:'#9ca3af' },
+  'EIN Transfer': { bg:'#eff6ff', border:'#3b82f6', color:'#1e40af', icon:'⇄', strip:'#3b82f6' },
+};
+
+const PRIORITY_META = {
+  critical: { label:'🔴 Critical', strip:'#dc2626', bg:'#fef2f2', color:'#991b1b', border:'#fca5a5' },
+  urgent:   { label:'🟡 Urgent',   strip:'#d97706', bg:'#fffbeb', color:'#92400e', border:'#fcd34d' },
+  normal:   { label:'🟢 On Track', strip:'#16a34a', bg:'#f0fdf4', color:'#14532d', border:'#86efac' },
+};
+
+function nameColor(name) {
+  let h = 0;
+  for (let i = 0; i < name.length; i++) h = name.charCodeAt(i) + ((h << 5) - h);
+  const hue = ((h % 360) + 360) % 360;
+  return `hsl(${hue},55%,42%)`;
+}
+
+// ─── RENDER ─────────────────────────────────────────────────────────────────
+function togglePriFilter(p) {
+  _priFilter = _priFilter === p ? null : p;
+  _filter = null;
+  render();
+}
+function clearFilters() {
+  _priFilter = null;
+  _filter = null;
+  _search = '';
+  document.getElementById('search-input').value = '';
+  render();
+}
+function toggleExpand(brand) {
+  if (_expanded.has(brand)) _expanded.delete(brand); else _expanded.add(brand);
+  render();
+}
+function setFilter(s) {
+  _filter = _filter === s ? null : s;
+  _priFilter = null;
+  render();
+}
+
+function render() {
+  const counts = {};
+  Object.keys(STATUS_CFG).forEach(s => counts[s] = ABG_BRANDS.filter(b => b.status === s).length);
+
+  let filtered = ABG_BRANDS.slice();
+  if (_filter) filtered = filtered.filter(b => b.status === _filter);
+  if (_priFilter) filtered = filtered.filter(b => b.priority === _priFilter);
+  if (_search) {
+    const q = _search.toLowerCase();
+    filtered = filtered.filter(b => b.brand.toLowerCase().includes(q) || b.opco.toLowerCase().includes(q));
+  }
+
+  // KPI tiles
+  let kpi = '';
+  Object.entries(STATUS_CFG).forEach(([s, c]) => {
+    const active = _filter === s;
+    kpi += `<div onclick="setFilter('${s}')"
+      style="cursor:pointer;border-radius:14px;padding:16px 18px;background:${active?c.bg:'#fff'};
+             border:2px solid ${active?c.border:'#e5e7eb'};
+             box-shadow:${active?`0 0 0 3px ${c.border}33,0 4px 12px ${c.border}22`:'0 1px 4px rgba(0,0,0,.06)'};
+             transition:all .18s ease">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <span style="font-size:10px;font-weight:800;color:${active?c.color:'#6b7280'};text-transform:uppercase;letter-spacing:.07em">${s}</span>
+        <span style="width:24px;height:24px;border-radius:7px;background:${active?c.border+'22':'#f3f4f6'};border:1.5px solid ${active?c.border:'#e5e7eb'};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:${active?c.color:'#6b7280'}">${c.icon}</span>
+      </div>
+      <div style="font-size:32px;font-weight:900;color:${active?c.color:'#111'};line-height:1;letter-spacing:-.02em">${counts[s]}</div>
+      <div style="font-size:11px;color:${active?c.color:'#9ca3af'};margin-top:3px">${counts[s]===1?'brand':'brands'}</div>
+    </div>`;
+  });
+  document.getElementById('kpi-row').innerHTML = kpi;
+
+  // Header count
+  document.getElementById('hdr-count').textContent = `${ABG_BRANDS.length} brands tracked`;
+  document.getElementById('hdr-updated').textContent = `Updated ${new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}`;
+  document.getElementById('filter-count').textContent = `${filtered.length} / ${ABG_BRANDS.length} brands`;
+
+  // Priority filter button states
+  ['critical','urgent'].forEach(p => {
+    const btn = document.getElementById(`pf-${p}`);
+    if (btn) btn.style.opacity = (_priFilter && _priFilter !== p) ? '0.45' : '1';
+  });
+
+  // Cards
+  const checkSvg = `<svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2L7.5 2.5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  let cards = '';
+
+  if (!filtered.length) {
+    cards = `<div style="grid-column:1/-1;text-align:center;padding:80px 20px;color:#9ca3af;font-size:14px">No brands match your filter.</div>`;
+  } else {
+    filtered.forEach(b => {
+      const c    = STATUS_CFG[b.status];
+      const color = nameColor(b.brand);
+      const ini  = b.brand[0].toUpperCase();
+      const exp  = _expanded.has(b.brand);
+      const done = b.progress !== undefined ? b.progress : (b.status === 'EIN Transfer' ? 1 : 0);
+      const pMeta = PRIORITY_META[b.priority || 'normal'];
+      const STEPS = b.status === 'EIN Transfer'
+        ? ['Existing Shop', 'EIN / Agency', 'Pattern Live']
+        : ['Shop Setup', 'Products Live', 'Fully Live'];
+
+      const cardBorder = exp ? c.border : b.priority === 'critical' ? '#fca5a5' : '#e5e7eb';
+      const cardShadow = exp ? `0 8px 24px ${c.border}33` : b.priority === 'critical' ? '0 2px 10px rgba(220,38,38,.18)' : '0 1px 5px rgba(0,0,0,.06)';
+      const stripColor = b.priority === 'critical' ? pMeta.strip : c.strip;
+
+      cards += `
+      <div onclick="toggleExpand('${b.brand.replace(/'/g,"\\'")}');event.stopPropagation()"
+        style="cursor:pointer;background:#fff;border-radius:16px;overflow:hidden;border:1.5px solid ${cardBorder};box-shadow:${cardShadow};transition:all .18s ease"
+        onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,.12)'"
+        onmouseout="this.style.transform='';this.style.boxShadow='${cardShadow}'">
+
+        <div style="height:4px;background:linear-gradient(90deg,${stripColor},${stripColor}99)"></div>
+        <div style="padding:16px">
+
+          <!-- Header -->
+          <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:13px">
+            <div style="width:40px;height:40px;border-radius:12px;background:${color}15;border:1.5px solid ${color}30;
+                        display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:900;color:${color};flex-shrink:0">${ini}</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-weight:800;font-size:13.5px;color:#111;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.3">${b.brand}</div>
+              <div style="font-size:11px;color:#6b7280;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${b.opco}</div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0">
+              <div style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:7px;background:${c.bg};color:${c.color};border:1.5px solid ${c.border}55;white-space:nowrap">${c.icon} ${b.status}</div>
+              <div style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:6px;background:${pMeta.bg};color:${pMeta.color};border:1px solid ${pMeta.border};white-space:nowrap">${pMeta.label}</div>
+            </div>
+          </div>
+
+          <!-- Progress -->
+          <div style="display:flex;align-items:flex-start;margin-bottom:13px">
+            ${STEPS.map((step, i) => {
+              const isDone = i < done;
+              const isCurr = i === done;
+              return `
+                <div style="display:flex;flex-direction:column;align-items:center;flex:1">
+                  <div style="width:22px;height:22px;border-radius:50%;background:${isDone?c.strip:'white'};border:2px solid ${isDone||isCurr?c.strip:'#d1d5db'};display:flex;align-items:center;justify-content:center">
+                    ${isDone ? checkSvg : `<div style="width:7px;height:7px;border-radius:50%;background:${isCurr?c.strip:'#e5e7eb'}"></div>`}
+                  </div>
+                  <div style="font-size:9px;color:${isDone?c.color:isCurr?c.color:'#9ca3af'};margin-top:3px;font-weight:${isDone||isCurr?'700':'400'};text-align:center;line-height:1.3;max-width:58px">${step}</div>
+                </div>
+                ${i < STEPS.length - 1 ? `<div style="flex:0 0 20px;height:2px;background:${isDone?c.strip:'#e5e7eb'};margin-top:11px;border-radius:2px"></div>` : ''}
+              `;
+            }).join('')}
+          </div>
+
+          <!-- Tags -->
+          <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-bottom:${exp||b.action?'10px':'0'}">
+            <span style="font-size:10px;padding:2px 8px;border-radius:6px;background:#f3f4f6;color:#4b5563;font-weight:500">${b.shopStatus}</span>
+            ${b.skus ? `<span style="font-size:10px;padding:2px 8px;border-radius:6px;background:#eff6ff;color:#1d4ed8;font-weight:700">${b.skus}</span>` : ''}
+            <span style="margin-left:auto;font-size:11px;color:#9ca3af;transform:${exp?'rotate(180deg)':'rotate(0)'};display:inline-block;transition:transform .2s">▾</span>
+          </div>
+
+          <!-- Action needed preview (collapsed) -->
+          ${!exp && b.action ? `
+            <div style="font-size:10px;color:${b.priority==='critical'?'#dc2626':b.priority==='urgent'?'#b45309':'#374151'};
+                        background:${b.priority==='critical'?'#fef2f2':b.priority==='urgent'?'#fffbeb':'#f9fafb'};
+                        border:1px solid ${b.priority==='critical'?'#fecaca':b.priority==='urgent'?'#fde68a':'#e5e7eb'};
+                        padding:6px 10px;border-radius:8px;line-height:1.5;
+                        overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">
+              ${b.priority==='critical'?'🚨':'⚡'} ${b.action}
+            </div>` : ''}
+
+          <!-- Expanded -->
+          ${exp ? `
+            <div style="border-top:1.5px solid #f3f4f6;padding-top:12px;animation:fadeIn .15s ease">
+              <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;margin-bottom:5px">Current Status</div>
+              <div style="font-size:12px;color:#374151;line-height:1.65;margin-bottom:${b.action?'12px':'0'}">${b.currentWork}</div>
+              ${b.action ? `
+                <div style="background:${b.priority==='critical'?'#fef2f2':b.priority==='urgent'?'fffbeb':'#f0fdf4'};
+                            border:1.5px solid ${b.priority==='critical'?'#fecaca':b.priority==='urgent'?'#fde68a':'#bbf7d0'};
+                            border-radius:10px;padding:10px 13px">
+                  <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;
+                              color:${b.priority==='critical'?'#dc2626':b.priority==='urgent'?'#b45309':'#15803d'};margin-bottom:4px">
+                    ${b.priority==='critical'?'🚨 Action Required':'⚡ Next Steps'}
+                  </div>
+                  <div style="font-size:12px;color:${b.priority==='critical'?'#991b1b':b.priority==='urgent'?'#92400e':'#14532d'};line-height:1.6">${b.action}</div>
+                </div>` : ''}
+            </div>` : ''}
+
+        </div>
+      </div>`;
+    });
+  }
+
+  document.getElementById('cards-grid').innerHTML = cards;
+}
+
+// ─── SEARCH ─────────────────────────────────────────────────────────────────
+function applyFilters() {
+  _search = document.getElementById('search-input').value;
+  render();
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+render();
+</script>
+</body>
+</html>
