@@ -239,8 +239,8 @@
 const ABG_BRANDS = [
   // ── Live ──
   { brand:'Forever 21',       opco:'ABG Direct',             status:'Live',         shopStatus:'Pattern Registered', progress:2, priority:'urgent',
-    currentWork:'Active orders across 3 licensees. Brands Unlimited: F21 June ATS (PO 141694, 4,212 units) + July ATS (12,080 units, ship shifted to 8/15). Mark Edwards: High Summer (PO 141295, 8,500 units) + BTS Prebook (24,444 units due 6/29 for 7/15 Walmart BTS launch). Amazon 1P buy-up (16,127 units, requested 6/16).',
-    action:'Images/descriptions needed on Brands Unlimited assortments. BTS deadline 6/29.' },
+    currentWork:'Active orders across 3 licensees. Brands Unlimited: F21 June ATS (PO 141694, 4,212 units) + July ATS (12,080 units, ship shifted to 8/15). Mark Edwards: High Summer (PO 141295, 8,500 units) + BTS Prebook (24,444 units). Amazon 1P buy-up (16,127 units, requested 6/16). ⚠️ Mark Edwards TikTok Shop targeting 7/31 go-live — masterfiles not yet received.',
+    action:'Masterfiles needed from Mark Edwards urgently — TikTok Shop go-live target is 7/31. Images/descriptions also needed on Brands Unlimited assortments.' },
   { brand:'Volcom',           opco:'ABG - Levy Group',        status:'Live',         shopStatus:'Pattern Registered', progress:2, priority:'urgent',
     currentWork:"Levy Group: Men's Swim 2026 active (POs 137415/137416/137418). Men's Swim ATS (PO 137419). Spring 2027 pre-books placed 6/17 (1,870 + 1,850 units).",
     action:'2 product images still missing as of 6/18 — needed to complete listings.' },
@@ -251,8 +251,8 @@ const ABG_BRANDS = [
     currentWork:"Men's Swim 2026 POs sent: May (PO 137378, 48u) + June (PO 137379, 48u) + July (PO 137380, 36u). 132 total swim units active.",
     action:'Brand Authorization pending — email ID needed for TikTok Shop verification code.' },
   { brand:'Nautica',          opco:'ABG - Levy Group',        status:'Live',         shopStatus:'Pattern Registered', progress:2, priority:'normal',
-    currentWork:'Fall 2026 Outerwear PO sent: Aug (438 units, $46,440) + Sept (138 units, $14,766) = 576 units total. Item setup info sent 5/11.',
-    action:'Next assortment details needed from brand for additional drops.' },
+    currentWork:'Fall 2026 Outerwear PO sent: Aug (438 units, $46,440) + Sept (138 units, $14,766) = 576 units total. Asana board shows new assortment in Product Listing stage (Blocker Owner: Amanda Wei).',
+    action:'Amanda Wei to unblock Product Listing stage for Fall assortment. Coordinate next assortment details with brand.' },
   // ── In Progress ──
   { brand:'Shaq',             opco:'ABG - Falic Fashion',     status:'In Progress',  shopStatus:'Deactivated',        progress:1, priority:'urgent',
     currentWork:'Shop setup complete. Product onboarding in progress. Shop going live in June.',
@@ -279,24 +279,27 @@ const ABG_BRANDS = [
     currentWork:"First orders placed 6/15/2026 via Catalyst: Men's Denim Oct ($20,587, 850u) + Nov ($3,422, 150u) + Women's Denim Nov ($117,565, 5,631u) = 6,631 units, $141,574 at cost.",
     action:'Shop creation and item setup not yet started — need to begin onboarding process.' },
   // ── Not Started ──
-  { brand:'Hunter',           opco:'Centric Brands',          status:'Not Started',  shopStatus:'Not Created',        progress:0, priority:'normal',
-    currentWork:'Fall 2026 order in pipeline: 135 units, Aug 1 ship date. Contract not yet signed.',
-    action:'Contract signature needed. TikTok Shop whitelisting of Pattern email pending.' },
+  { brand:'Hunter',           opco:'Centric Brands',          status:'In Progress',  shopStatus:'Not Created',        progress:0, priority:'normal',
+    currentWork:'Now in Asana onboarding board — WAITING/BLOCKED. Working Status: Waiting on IT. Fall 2026 order in pipeline: 135 units, Aug 1 ship date.',
+    action:'IT blocker needs to be resolved. Contract signature + TikTok Shop whitelisting of Pattern email still pending.' },
   { brand:'Dockers',          opco:'Centric Brands',          status:'Not Started',  shopStatus:'Not Created',        progress:0, priority:'normal',
     currentWork:'Onboarding meeting completed in April. Awaiting follow-up.',
     action:'Follow-up needed to restart onboarding process.' },
-  { brand:'Eddie Bauer',      opco:'ABG - KMI Brands',        status:'Not Started',  shopStatus:'Not Created',        progress:0, priority:'normal',
-    currentWork:'EIN Transfer target: end of August. No onboarding info received yet.',
-    action:'Onboarding information needed from brand/AM team.' },
-  { brand:'Ted Baker',        opco:'ABG - KMI Brands',        status:'Not Started',  shopStatus:'Not Created',        progress:0, priority:'normal',
-    currentWork:'Assortment selected but PO not yet placed. No product info shared.',
-    action:'PO placement and product information needed to begin.' },
-  { brand:'Vince',            opco:'Centric Brands',          status:'Not Started',  shopStatus:'Not Created',        progress:0, priority:'normal',
-    currentWork:'Centric Brands Fall 2026: Handbags & Accessories (3,855 units) — contract not yet signed.',
-    action:'Contract signature needed to begin onboarding.' },
-  { brand:'Vitalist (Reebok Smart Watch)', opco:'ABG - YGI Group', status:'Not Started', shopStatus:'Not Created',   progress:0, priority:'urgent',
-    currentWork:'Pushing listings live on CandySpot. Awaiting compliance documentation.',
-    action:'CS documentation needed from Nextwave to proceed.' },
+  { brand:'Eddie Bauer',      opco:'ABG - KMI Brands',        status:'In Progress',  shopStatus:'Not Created',        progress:0, priority:'normal',
+    currentWork:'Now in Asana onboarding board — Signed / Day 0 Setup stage. EIN Transfer target: end of August.',
+    action:'Day 0 setup underway. Onboarding requirements needed from brand/AM team.' },
+  { brand:'Ted Baker',        opco:'ABG - KMI Brands',        status:'In Progress',  shopStatus:'Not Created',        progress:0, priority:'normal',
+    currentWork:'Now in Asana onboarding board — WAITING/BLOCKED. Working Status: In Progress. Assortment selected but PO not yet placed.',
+    action:'Unblock pending items so onboarding can progress. PO placement and product info needed.' },
+  { brand:'Vince',            opco:'Centric Brands',          status:'In Progress',  shopStatus:'Not Created',        progress:0, priority:'normal',
+    currentWork:'In Asana onboarding board as "Vince - KMI Brand" — WAITING/BLOCKED. Working Status: Not Started. Centric Brands Fall 2026: Handbags & Accessories (3,855 units) — contract not yet signed.',
+    action:'Contract signature needed to unblock. Confirm requirements to move out of WAITING/BLOCKED.' },
+  { brand:'Roxy (YGI Group)',              opco:'ABG - YGI Group',         status:'In Progress',  shopStatus:'Deactivated',              progress:1, priority:'urgent',
+    currentWork:'TikTok Shop targeting go-live 7/31. Masterfiles not yet received from YGI Group — listing setup cannot proceed until received.',
+    action:'Masterfiles needed from YGI Group urgently to meet 7/31 TikTok Shop launch target.' },
+  { brand:'Vitalist (Reebok Smart Watch)', opco:'ABG - YGI Group', status:'In Progress', shopStatus:'Not Created',   progress:0, priority:'urgent',
+    currentWork:'In Asana onboarding board as "Reebok - Vitalist" — WAITING/BLOCKED. Pushing listings live on CandySpot. Awaiting compliance documentation.',
+    action:'CS documentation needed from Nextwave to unblock. Actively in the onboarding pipeline now.' },
   { brand:'YGI Group Jewelry',opco:'ABG - YGI Group',         status:'Not Started',  shopStatus:'Not Created',        progress:0, priority:'urgent',
     currentWork:'Item setup sheet prepared. Product images still missing.',
     action:'Product images needed — currently being produced by creative team.' },
@@ -306,16 +309,16 @@ const ABG_BRANDS = [
   // ── EIN Transfer ──
   { brand:'Champion',         opco:'ABG - O5 Group',          status:'EIN Transfer', shopStatus:'Live (other entity)', progress:1, priority:'normal',
     currentWork:'Kids ATS via Oved O5: May (1,008u, images due 6/19 for 7/18 Walmart launch) + July (1,032u, ordered 6/16) + Girls Spring 2027 (1,200u). Pattern agency deal target: end of July.',
-    action:'🚨 Product images needed by 6/19 for 7/18 Walmart launch deadline. EIN Transfer or agency deal authorization required by end of July.' },
+    action:'8��� Product images needed by 6/19 for 7/18 Walmart launch deadline. EIN Transfer or agency deal authorization required by end of July.' },
   { brand:'Reebok',           opco:'ABG - Levy Group',        status:'EIN Transfer', shopStatus:'Live (other entity)', progress:1, priority:'urgent',
     currentWork:'Currently live under another entity. Pattern agency deal target: end of July.',
     action:'EIN Transfer or agency deal authorization needed by end of July.' },
   { brand:"GUESS Men's",      opco:'ABG - Direct',            status:'EIN Transfer', shopStatus:'Live (other entity)', progress:1, priority:'urgent',
-    currentWork:"Q4 2026 orders placed: Aug–Oct (880u) + Holiday Nov–Jan (2,019u) + Guess Jeans Men's Holiday Nov–Jan (18,069u) = ~21K units. Currently under another entity.",
-    action:'EIN Transfer authorization needed — significant Q4 volume at stake.' },
+    currentWork:"Q4 2026 orders placed: Aug–Oct (880u) + Holiday Nov–Jan (2,019u) + Guess Jeans Men's Holiday Nov–Jan (18,069u) = ~21K units. Currently under another entity. 🆕 New Pattern shop task ('Guess') is now in Signed – Day 0 Setup in Asana; 'Guess Jeans' task is in Waiting for Inventory.",
+    action:'EIN Transfer authorization needed — significant Q4 volume at stake. Pattern shop onboarding now actively in progress.' },
   { brand:"GUESS Women's",    opco:'ABG - Direct',            status:'EIN Transfer', shopStatus:'Live (other entity)', progress:1, priority:'urgent',
-    currentWork:"Q4 2026: YC Aug/Sept/Oct (10,720u) + Guess Jeans Hyunjin Fall (840u) + Women's Jeans Q3 (18,770u) + Holiday Nov–Jan (4,528u) + Guess Jeans Holiday (24,039u) = ~59K units. Currently under another entity.",
-    action:'EIN Transfer authorization needed — major Q4/Holiday volume at stake.' },
+    currentWork:"Q4 2026: YC Aug/Sept/Oct (10,720u) + Guess Jeans Hyunjin Fall (840u) + Women's Jeans Q3 (18,770u) + Holiday Nov–Jan (4,528u) + Guess Jeans Holiday (24,039u) = ~59K units. Currently under another entity. 🆕 New Pattern shop now in Day 0 Setup in Asana.",
+    action:'EIN Transfer authorization needed — major Q4/Holiday volume at stake. Pattern shop onboarding now actively in progress.' },
   { brand:'Quiksilver',       opco:'ABG - Blue Sage',         status:'EIN Transfer', shopStatus:'Live (other entity)', progress:1, priority:'normal',
     currentWork:'Blue Sage: Accessories June ATS (356u) + Q4 Set Orders (774u). Centric Kids Spring 2027 pre-books (Boys: 21,924u — not yet signed). Currently under another entity.',
     action:'EIN Transfer needed. Centric Brands Spring 2027 contract signature needed.' },
@@ -323,13 +326,13 @@ const ABG_BRANDS = [
     currentWork:"Oved O5: Swim May (764u) + June (1,086u) active. Centric Kids Spring 2027 pre-books (Boys + Girls: 14,552u — not signed). Currently under another entity.",
     action:'EIN Transfer needed. Centric Brands Spring 2027 contract signature needed.' },
   { brand:'Juicy Couture',    opco:'ABG - NYC Alliance',      status:'EIN Transfer', shopStatus:'Live (other entity)', progress:1, priority:'urgent',
-    currentWork:'NYC Alliance active orders: July–Sept ($80K+, 2,592u) + TTS 8/15 ($45,230, 1,285u) + Oct–Jan bulk ($329K+, 7,960u) = 11,837 units. Pattern agency deal target: end of August.',
-    action:'EIN Transfer or agency deal authorization needed by end of August.' },
+    currentWork:'NYC Alliance active orders: July–Sept ($80K+, 2,592u) + TTS 8/15 ($45,230, 1,285u) + Oct–Jan bulk ($329K+, 7,960u) = 11,837 units. Pattern agency deal target: end of August. 🆕 New aggregated Pattern shop task now in Signed – Day 0 Setup in Asana. Also in WAITING/BLOCKED (Blocker Owner: Amanda Wei).',
+    action:'EIN Transfer or agency deal authorization needed by end of August. Amanda Wei is blocking owner on Asana task — follow up on aggregated shop setup.' },
 ];
 
 // ─── CONFIG ──────────────────────────────────────────────────────────────────
 const STATUS_CFG = {
-  'Live':         { bg:'#dcfce7', border:'#16a34a', color:'#15803d', strip:'#16a34a' },
+  'Live':         { bg:'#dcfce7', border:'#a6f4af', color:'#15803d', strip:'#16a34a' },
   'In Progress':  { bg:'#fffbeb', border:'#f59e0b', color:'#92400e', strip:'#f59e0b' },
   'Not Started':  { bg:'#f9fafb', border:'#d1d5db', color:'#374151', strip:'#9ca3af' },
   'EIN Transfer': { bg:'#eff6ff', border:'#3b82f6', color:'#1e40af', strip:'#3b82f6' },
@@ -341,7 +344,7 @@ const PRI_CFG = {
 };
 const PIPE_ORDER = ['Not Started', 'In Progress', 'EIN Transfer', 'Live'];
 
-// ─── STATE ───────────────────────────────────────────────────────────────────
+// ─── STATE ──────────────────────────────────────────────────────────────────
 let _statusFilter = null;
 let _priFilter    = null;
 let _search       = '';
