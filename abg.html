@@ -239,8 +239,8 @@
 const ABG_BRANDS = [
   // ── Live ──
   { brand:'Forever 21',       opco:'ABG Direct',             status:'Live',         shopStatus:'Pattern Registered', progress:2, priority:'urgent',
-    currentWork:'Active orders across 3 licensees. Brands Unlimited: F21 June ATS (PO 141694, 4,212 units) + July ATS (12,080 units, ship shifted to 8/15). Mark Edwards: High Summer (PO 141295, 8,500 units) + BTS Prebook (24,444 units). Amazon 1P buy-up (16,127 units, requested 6/16). ⚠️ Mark Edwards TikTok Shop targeting 7/31 go-live — masterfiles not yet received.',
-    action:'Masterfiles needed from Mark Edwards urgently — TikTok Shop go-live target is 7/31. Images/descriptions also needed on Brands Unlimited assortments.' },
+    currentWork:'Active orders across 3 licensees. Brands Unlimited: F21 June ATS (PO 141694, 4,212 units) + July ATS (12,080 units, ship shifted to 8/15). Mark Edwards: High Summer (PO 141295, 8,500 units) + BTS Prebook (24,444 units). Amazon 1P buy-up (16,127 units, requested 6/16). ⚠️ Mark Edwards TikTok Shop targeting 7/31 go-live — masterfiles not yet received from Pattern masterfiles team.',
+    action:'Masterfiles needed from Pattern masterfiles team urgently — TikTok Shop go-live target is 7/31. Images/descriptions also needed on Brands Unlimited assortments.' },
   { brand:'Volcom',           opco:'ABG - Levy Group',        status:'Live',         shopStatus:'Pattern Registered', progress:2, priority:'urgent',
     currentWork:"Levy Group: Men's Swim 2026 active (POs 137415/137416/137418). Men's Swim ATS (PO 137419). Spring 2027 pre-books placed 6/17 (1,870 + 1,850 units).",
     action:'2 product images still missing as of 6/18 — needed to complete listings.' },
@@ -295,8 +295,8 @@ const ABG_BRANDS = [
     currentWork:'In Asana onboarding board as "Vince - KMI Brand" — WAITING/BLOCKED. Working Status: Not Started. Centric Brands Fall 2026: Handbags & Accessories (3,855 units) — contract not yet signed.',
     action:'Contract signature needed to unblock. Confirm requirements to move out of WAITING/BLOCKED.' },
   { brand:'Roxy (YGI Group)',              opco:'ABG - YGI Group',         status:'In Progress',  shopStatus:'Deactivated',              progress:1, priority:'urgent',
-    currentWork:'TikTok Shop targeting go-live 7/31. Masterfiles not yet received from YGI Group — listing setup cannot proceed until received.',
-    action:'Masterfiles needed from YGI Group urgently to meet 7/31 TikTok Shop launch target.' },
+    currentWork:'TikTok Shop targeting go-live 7/31. Masterfiles not yet received from Pattern masterfiles team — listing setup cannot proceed until received.',
+    action:'Masterfiles needed from Pattern masterfiles team urgently to meet 7/31 TikTok Shop launch target.' },
   { brand:'Vitalist (Reebok Smart Watch)', opco:'ABG - YGI Group', status:'In Progress', shopStatus:'Not Created',   progress:0, priority:'urgent',
     currentWork:'In Asana onboarding board as "Reebok - Vitalist" — WAITING/BLOCKED. Pushing listings live on CandySpot. Awaiting compliance documentation.',
     action:'CS documentation needed from Nextwave to unblock. Actively in the onboarding pipeline now.' },
@@ -309,7 +309,7 @@ const ABG_BRANDS = [
   // ── EIN Transfer ──
   { brand:'Champion',         opco:'ABG - O5 Group',          status:'EIN Transfer', shopStatus:'Live (other entity)', progress:1, priority:'normal',
     currentWork:'Kids ATS via Oved O5: May (1,008u, images due 6/19 for 7/18 Walmart launch) + July (1,032u, ordered 6/16) + Girls Spring 2027 (1,200u). Pattern agency deal target: end of July.',
-    action:'8��� Product images needed by 6/19 for 7/18 Walmart launch deadline. EIN Transfer or agency deal authorization required by end of July.' },
+    action:'🚨 Product images needed by 6/19 for 7/18 Walmart launch deadline. EIN Transfer or agency deal authorization required by end of July.' },
   { brand:'Reebok',           opco:'ABG - Levy Group',        status:'EIN Transfer', shopStatus:'Live (other entity)', progress:1, priority:'urgent',
     currentWork:'Currently live under another entity. Pattern agency deal target: end of July.',
     action:'EIN Transfer or agency deal authorization needed by end of July.' },
@@ -332,7 +332,7 @@ const ABG_BRANDS = [
 
 // ─── CONFIG ──────────────────────────────────────────────────────────────────
 const STATUS_CFG = {
-  'Live':         { bg:'#dcfce7', border:'#a6f4af', color:'#15803d', strip:'#16a34a' },
+  'Live':         { bg:'#dcfce7', border:'#16a34a', color:'#15803d', strip:'#16a34a' },
   'In Progress':  { bg:'#fffbeb', border:'#f59e0b', color:'#92400e', strip:'#f59e0b' },
   'Not Started':  { bg:'#f9fafb', border:'#d1d5db', color:'#374151', strip:'#9ca3af' },
   'EIN Transfer': { bg:'#eff6ff', border:'#3b82f6', color:'#1e40af', strip:'#3b82f6' },
@@ -344,7 +344,7 @@ const PRI_CFG = {
 };
 const PIPE_ORDER = ['Not Started', 'In Progress', 'EIN Transfer', 'Live'];
 
-// ─── STATE ──────────────────────────────────────────────────────────────────
+// ─── STATE ───────────────────────────────────────────────────────────────────
 let _statusFilter = null;
 let _priFilter    = null;
 let _search       = '';
